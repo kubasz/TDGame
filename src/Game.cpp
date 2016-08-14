@@ -3,8 +3,8 @@
 #include <SFGUI/Renderers.hpp>
 
 #include "Game.hpp"
-#include "GameState.hpp"
-#include "MenuGameState.hpp"
+#include "GameStates/GameState.hpp"
+#include "GameStates/MenuGameState.hpp"
 
 #ifdef _MSC_VER
 #include <conio.h>

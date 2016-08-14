@@ -13,9 +13,11 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 
-#include "Bullet.hpp"
-#include "Creep.hpp"
-#include "Tower.hpp"
+#include "Renderable.hpp"
+#include "Bullet/Bullet.hpp"
+#include "Creep/Creep.hpp"
+#include "Decoration.hpp"
+#include "Tower/Tower.hpp"
 
 class Level;
 class LevelInstance;
@@ -98,6 +100,7 @@ private:
 	};
 
 	std::vector<creationInfo_t> invasionPlan_;
+	std::vector<sf::Vector2i> spawnPoints_;
 
 public:
 	InvasionManager(const nlohmann::json & data);
@@ -107,6 +110,9 @@ public:
 
 	//! Returns if all creeps were already spawned before this moment.
 	bool invasionEnded(int64_t moment) const;
+
+	//! Returns all points on which Creeps can spawn.
+	const std::vector<sf::Vector2i> & getSpawnPoints() const;
 };
 
 //! Contains static information about a level.
@@ -153,7 +159,9 @@ private:
 	std::unique_ptr<std::shared_ptr<Tower>[]> towerMap_;
 	std::vector<std::shared_ptr<Bullet>> bullets_;
 	std::vector<std::shared_ptr<Creep>> creeps_;
+	std::vector<std::shared_ptr<Decoration>> decorations_;
 	std::vector<std::shared_ptr<Tower>> towers_;
+	std::vector<std::weak_ptr<Renderable>> renderables_;
 	GridNavigationProvider gridNavigation_;
 	GridTowerPlacementOracle gridTowerPlacement_;
 	int64_t currentFrame_;
@@ -182,6 +190,9 @@ public:
 		return money_;
 	}
 
+	//! Returns a control widget for an object selected by mouse position.
+	std::shared_ptr<Selectable> selectAt(sf::Vector2f position);
+
 	//! \brief Creates a tower at given position.
 	//! Returns if there was enough cash to instantiate the tower.
 	bool createTowerAt(const std::string & name, sf::Vector2i position);
@@ -189,6 +200,7 @@ public:
 		const std::string & name,
 		int32_t life, int32_t bounty,
 		sf::Vector2i position);
+	void registerBullet(std::shared_ptr<Bullet> bullet);
 
 	void update();
 	void render(sf::RenderTarget & target);

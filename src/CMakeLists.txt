@@ -1,16 +1,25 @@
 set(SOURCES
-	Bullet.cpp
-	Creep.cpp
+	Bullet/Bullet.cpp
+	Bullet/BulletDisplayComponent.cpp
+	Bullet/BulletFactory.cpp
+	Bullet/BulletMovementComponent.cpp
+	Creep/Creep.cpp
+	Creep/CreepDisplayComponent.cpp
+	Creep/CreepFactory.cpp
+	Creep/CreepLifeDisplayComponent.cpp
+	Creep/CreepQueryService.cpp
+	Creep/CreepWalkComponent.cpp
+	Decoration.cpp
 	Game.cpp
-	GameState.cpp
-	HashedGridSelectionOracle.cpp
+	GameStates/LevelGameState.cpp
+	GameStates/LevelSelectGameState.cpp
+	GameStates/MenuGameState.cpp
 	Level.cpp
-	LevelGameState.cpp
-	LevelSelectGameState.cpp
-	MenuGameState.cpp
-	Tower.cpp
-	TowerComponent.cpp
-	TowerFactory.cpp
+	Tower/Tower.cpp
+	Tower/TowerDisplayComponent.cpp
+	Tower/TowerFactory.cpp
+	Tower/TowerShootingComponent.cpp
+	Tower/TowerTargetingComponent.cpp
 )
 
 set(LIBS

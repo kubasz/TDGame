@@ -1,4 +1,5 @@
-#include "Game.hpp"
+#include "../Constants.hpp"
+#include "../Game.hpp"
 #include "LevelSelectGameState.hpp"
 #include "MenuGameState.hpp"
 
@@ -29,7 +30,7 @@ MenuGameState::MenuGameState(Game & game)
 
 void MenuGameState::update()
 {
-	guiDesktop_.Update(1.f / 60.f);
+	guiDesktop_.Update(Constants::FPS);
 }
 
 void MenuGameState::render(sf::RenderTarget & target)

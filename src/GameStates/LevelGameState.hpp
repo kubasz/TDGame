@@ -10,7 +10,7 @@
 #include <SFGUI/Widgets.hpp>
 
 #include "GameState.hpp"
-#include "Level.hpp"
+#include "../Level.hpp"
 
 // TODO: Separate tower placing logic from this class
 
@@ -22,18 +22,23 @@ private:
 	std::shared_ptr<Level> level_;
 	std::shared_ptr<LevelInstance> levelInstance_;
 	sfg::Label::Ptr guiCashLabel_;
+	sfg::Box::Ptr guiInfoPanelLocation_;
 	int64_t oldCash_;
 	sfg::Window::Ptr guiMainWindow_;
 	sfg::Desktop guiDesktop_;
 	sf::View levelView_;
 	sf::Vector2i windowSize_;
 	sf::Vector2i lastMousePosition_;
+	sf::Vector2f lastMouseLevelPosition_;
 	sf::Vector2i hoveredTile_;
+
+	std::shared_ptr<Selectable> selectedObject_;
 
 	std::string placedTowerTypeName_;
 	bool isPlacingTower_;
 
 	void createTowerCreationButtons(const sfg::Box::Ptr & layout);
+	void centerView();
 
 	// TODO: Convert these handlers to Thor dispatcher ?
 

@@ -16,9 +16,6 @@ class Selectable
 public:
 	virtual ~Selectable() {}
 
-	//! \brief Returns a rectangle for broad-phase collision checking.
-	virtual sf::FloatRect getBoundingRect() const = 0;
-
 	//! \brief Precise mouse collision check.
 	//! \param point Position of the mouse, in absolute coordinates.
 	virtual bool isHit(sf::Vector2f point) const = 0;

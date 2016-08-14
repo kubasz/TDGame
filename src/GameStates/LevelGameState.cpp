@@ -1,9 +1,10 @@
 #include <fstream>
-
-#include "Level.hpp"
-#include "Creep.hpp"
-#include "Tower.hpp"
-#include "Game.hpp"
+#include "../Constants.hpp"
+#include "../Level.hpp"
+#include "../Creep/Creep.hpp"
+#include "../Tower/Tower.hpp"
+#include "../Tower/TowerFactory.hpp"
+#include "../Game.hpp"
 #include "LevelGameState.hpp"
 
 static const int RIGHT_PANEL_WIDTH = 200;
@@ -18,16 +19,19 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 	guiCashLabel_->SetRequisition({ 0.f, 16.f });
 	guiCashLabel_->SetAlignment({ 0.f, 0.f });
 
+	guiInfoPanelLocation_ = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+
 	auto guiMainLayout = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
 	guiMainLayout->PackEnd(guiCashLabel_, false);
 	createTowerCreationButtons(guiMainLayout);
+	guiMainLayout->PackEnd(guiInfoPanelLocation_, false);
 
 	guiMainWindow_ = sfg::Window::Create(sfg::Window::Style::BACKGROUND);
 	guiMainWindow_->Add(guiMainLayout);
 	guiDesktop_.Add(guiMainWindow_);
 
 	handleResize(game.getWidth(), game.getHeight());
-	levelView_.setCenter(0.f, 0.f);
+	centerView();
 }
 
 void LevelGameState::createTowerCreationButtons(const sfg::Box::Ptr & layout)
@@ -48,6 +52,14 @@ void LevelGameState::createTowerCreationButtons(const sfg::Box::Ptr & layout)
 	}
 }
 
+void LevelGameState::centerView()
+{
+	levelView_.setCenter({
+		(float)level_->getWidth() / 2.f,
+		(float)level_->getHeight() / 2.f
+	});
+}
+
 void LevelGameState::handleResize(int width, int height)
 {
 	// Set a view which excludes area claimed by UI
@@ -61,7 +73,6 @@ void LevelGameState::handleResize(int width, int height)
 
 	windowSize_ = { width, height };
 
-	// levelView_.reset(levelRect);
 	levelView_.setSize((float)levelWidth, (float)targetSize.y);
 	levelView_.setViewport(levelScaledRect);
 	levelView_.zoom(1.f / 32.f);
@@ -77,6 +88,13 @@ void LevelGameState::handleClick(sf::Vector2i position)
 	if (isPlacingTower_ && levelInstance_->canPlaceTowerHere(hoveredTile_)) {
 		levelInstance_->createTowerAt(placedTowerTypeName_, hoveredTile_);
 		isPlacingTower_ = false;
+	}
+	else if (!isPlacingTower_) {
+		selectedObject_ = levelInstance_->selectAt(lastMouseLevelPosition_);
+
+		guiInfoPanelLocation_->RemoveAll();
+		if (selectedObject_)
+			guiInfoPanelLocation_->PackEnd(selectedObject_->getPanel(), true);
 	}
 }
 
@@ -102,7 +120,7 @@ void LevelGameState::handleKeyPress(sf::Keyboard::Key key)
 
 void LevelGameState::update()
 {
-	guiDesktop_.Update(1.f / 60.f);
+	guiDesktop_.Update(Constants::FPS);
 	levelInstance_->update();
 
 	auto newCash = levelInstance_->getMoney();
@@ -123,10 +141,10 @@ void LevelGameState::render(sf::RenderTarget & target)
 	target.pushGLStates();
 	target.setView(levelView_);
 
-	const auto transformedPoint = target.mapPixelToCoords(lastMousePosition_);
+	lastMouseLevelPosition_ = target.mapPixelToCoords(lastMousePosition_);
 	hoveredTile_ = {
-		(int)round(transformedPoint.x),
-		(int)round(transformedPoint.y)
+		(int)round(lastMouseLevelPosition_.x),
+		(int)round(lastMouseLevelPosition_.y)
 	};
 
 	levelInstance_->render(target);

@@ -10,7 +10,8 @@
 #include <fstream>
 #include <vector>
 #include <utility>
-#include "Game.hpp"
+#include "../Constants.hpp"
+#include "../Game.hpp"
 #include "LevelGameState.hpp"
 #include "LevelSelectGameState.hpp"
 
@@ -84,7 +85,7 @@ void LevelSelectGameState::update()
 		handleResize(game_.getWidth(), game_.getHeight());
 	}
 
-	guiDesktop_.Update(1.f / 60.f);
+	guiDesktop_.Update(Constants::FPS);
 }
 
 void LevelSelectGameState::render(sf::RenderTarget & target)

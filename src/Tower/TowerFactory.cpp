@@ -1,4 +1,10 @@
+#include <memory>
+#include <json.hpp>
 #include "Tower.hpp"
+#include "TowerDisplayComponent.hpp"
+#include "TowerShootingComponent.hpp"
+#include "TowerTargetingComponent.hpp"
+#include "TowerFactory.hpp"
 
 using json = nlohmann::json;
 

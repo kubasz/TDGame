@@ -2,13 +2,14 @@
 #include <functional>
 #include <queue>
 #include <utility>
+#include <set>
 #include <stack>
-
 #include <json.hpp>
-
-#include "Bullet.hpp"
-#include "Creep.hpp"
-#include "Tower.hpp"
+#include "Bullet/BulletFactory.hpp"
+#include "Creep/CreepFactory.hpp"
+#include "Creep/CreepQueryService.hpp"
+#include "Decoration.hpp"
+#include "Tower/TowerFactory.hpp"
 #include "Level.hpp"
 
 using json = nlohmann::json;
@@ -94,15 +95,6 @@ void GridNavigationProvider::update()
 			tryPushVertex(current - 1);
 
 	} while (!verts.empty());
-
-	// Debug dump
-	/*printf("DUMP:\n");
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			printf("%i ", path_[y * width + x]);
-		}
-		putchar('\n');
-	}*/
 }
 
 GridTowerPlacementOracle::GridTowerPlacementOracle(LevelInstance & levelInstance)
@@ -242,6 +234,10 @@ void GridTowerPlacementOracle::update()
 	}
 
 	validTurretPlaces_[goalIndex] = false;
+
+	// TODO: Ughh
+	for (const auto & spawnPoint : levelInstance_.getLevel()->getInvasionManager().getSpawnPoints())
+		validTurretPlaces_[spawnPoint.y * width + spawnPoint.x] = false;
 }
 
 NavigationProvider<sf::Vector2i> & LevelInstance::getGoalNavigationProvider()
@@ -257,6 +253,14 @@ std::shared_ptr<Tower> LevelInstance::getTowerAt(sf::Vector2i position)
 
 InvasionManager::InvasionManager(const json & data)
 {
+	auto cmpPoints = [](const sf::Vector2i & a, const sf::Vector2i & b) -> bool {
+		if (a.x == b.x)
+			return a.y < b.y;
+		return a.x < b.x;
+	};
+
+	std::set<sf::Vector2i, decltype(cmpPoints)> knownSpawnPoints(cmpPoints);
+
 	// We are interested in the "waves" table
 	for (const auto & wave : data["waves"]) {
 		const int64_t startFrame = wave["start-frame"];
@@ -270,6 +274,7 @@ InvasionManager::InvasionManager(const json & data)
 			const sf::Vector2i spawnAt = {
 				creepDesc["spawn-at"][0], creepDesc["spawn-at"][1]
 			};
+			knownSpawnPoints.insert(spawnAt);
 
 			auto addInfo = [&](int64_t waveTime) {
 				invasionPlan_.push_back({
@@ -301,6 +306,8 @@ InvasionManager::InvasionManager(const json & data)
 	}
 
 	std::sort(invasionPlan_.begin(), invasionPlan_.end());
+	std::copy(knownSpawnPoints.begin(), knownSpawnPoints.end(),
+		std::back_inserter(spawnPoints_));
 }
 
 void InvasionManager::spawn(std::shared_ptr<LevelInstance> levelInstance, int64_t moment)
@@ -318,6 +325,11 @@ void InvasionManager::spawn(std::shared_ptr<LevelInstance> levelInstance, int64_
 bool InvasionManager::invasionEnded(int64_t moment) const
 {
 	return invasionPlan_.empty() || (invasionPlan_.back().moment > moment);
+}
+
+const std::vector<sf::Vector2i> & InvasionManager::getSpawnPoints() const
+{
+	return spawnPoints_;
 }
 
 Level::Level(std::istream & source)
@@ -340,7 +352,24 @@ LevelInstance::LevelInstance(std::shared_ptr<Level> level)
 	, gridTowerPlacement_(*this)
 	, currentFrame_(0)
 	, money_(level->getStartingMoney())
-{}
+{
+	for (auto source : level->getInvasionManager().getSpawnPoints())
+		decorations_.push_back(std::make_shared<CreepSourceDecoration>(sf::Vector2f(source)));
+	decorations_.push_back(std::make_shared<GoalDecoration>(sf::Vector2f(level->getGoal())));
+
+	for (const auto & decoration : decorations_)
+		renderables_.push_back(decoration);
+}
+
+std::shared_ptr<Selectable> LevelInstance::selectAt(sf::Vector2f position)
+{
+	for (auto & tower : towers_) {
+		if (tower->isHit(position))
+			return tower;
+	}
+
+	return nullptr;
+}
 
 bool LevelInstance::createTowerAt(const std::string & name, sf::Vector2i position)
 {
@@ -352,6 +381,7 @@ bool LevelInstance::createTowerAt(const std::string & name, sf::Vector2i positio
 	auto tower = typeInfo.construct({ (float)position.x, (float)position.y });
 
 	towers_.push_back(tower);
+	renderables_.push_back(tower);
 	towerMap_[position.y * level_->getWidth() + position.x] = tower;
 
 	gridNavigation_.update();
@@ -363,7 +393,15 @@ bool LevelInstance::createTowerAt(const std::string & name, sf::Vector2i positio
 
 void LevelInstance::createCreepAt(const std::string & name, int32_t life, int32_t bounty, sf::Vector2i position)
 {
-	creeps_.push_back(CreepFactory().createCreep(name, life, bounty, position));
+	auto creep = CreepFactory().createCreep(name, life, bounty, position);
+	creeps_.push_back(creep);
+	renderables_.push_back(creep);
+}
+
+void LevelInstance::registerBullet(std::shared_ptr<Bullet> bullet)
+{
+	bullets_.push_back(bullet);
+	renderables_.push_back(bullet);
 }
 
 template<typename Entity>
@@ -378,14 +416,25 @@ static void removeDeadEntities(std::vector<std::shared_ptr<Entity>> & entities)
 	entities.resize(std::distance(entities.begin(), it));
 }
 
+template<typename Entity>
+static void removeDeadEntities(std::vector<std::weak_ptr<Entity>> & entities)
+{
+	auto it = std::remove_if(entities.begin(), entities.end(),
+		std::mem_fn(&std::weak_ptr<Entity>::expired));
+	entities.resize(std::distance(entities.begin(), it));
+}
+
 void LevelInstance::update()
 {
 	level_->getInvasionManager().spawn(shared_from_this(), currentFrame_);
 
+	for (auto & decoration : decorations_)
+		decoration->update();
+
 	CreepVectorQueryService queryService(creeps_);
 
 	for (auto & tower : towers_) {
-		BulletFactory factory(bullets_, tower->getPosition());
+		BulletFactory factory(shared_from_this(), tower->getPosition());
 		tower->update(factory, queryService);
 	}
 
@@ -405,12 +454,9 @@ void LevelInstance::update()
 
 void LevelInstance::render(sf::RenderTarget & target)
 {
-	// TODO: Make all renderables derived from one base class
-	for (auto & tower : towers_)
-		tower->render(target);
-	for (auto & bullet : bullets_)
-		bullet->render(target);
-	for (auto & creep : creeps_)
-		creep->render(target);
 	gridTowerPlacement_.render(target);
+
+	removeDeadEntities(renderables_);
+	for (auto & renderable : renderables_)
+		renderable.lock()->render(target);
 }
