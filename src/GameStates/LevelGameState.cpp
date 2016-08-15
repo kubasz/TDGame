@@ -182,6 +182,12 @@ void LevelGameState::handleEvent(const sf::Event & evt)
 
 	if (evt.type == sf::Event::KeyPressed)
 		handleKeyPress(evt.key.code);
+	
+	if ((evt.type == sf::Event::KeyPressed) && (evt.key.code == sf::Keyboard::Escape)) {
+		isPlacingTower_ = false;
+		selectedObject_ = nullptr;
+		guiInfoPanelLocation_->RemoveAll();
+	}
 
 	guiDesktop_.HandleEvent(evt);
 }
