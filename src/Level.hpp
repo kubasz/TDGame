@@ -148,6 +148,11 @@ public:
 		return creeps_;
 	}
 
+	bool hasWon() const
+	{
+		return creeps_.empty() && level_->getInvasionManager().invasionEnded(currentFrame_);
+	}
+
 	//! Returns a control widget for an object selected by mouse position.
 	std::shared_ptr<Selectable> selectAt(sf::Vector2f position);
 

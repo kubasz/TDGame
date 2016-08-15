@@ -17,10 +17,13 @@ class Game;
 class LevelGameState final : public GameState
 {
 private:
+	Game & game_;
 	std::shared_ptr<Level> level_;
 	std::shared_ptr<LevelInstance> levelInstance_;
 	sfg::Label::Ptr guiCashLabel_;
+	sfg::Button::Ptr guiGameStartButton_;
 	sfg::Box::Ptr guiInfoPanelLocation_;
+	sfg::Window::Ptr guiWonWindow_;
 	int64_t oldCash_;
 	sfg::Window::Ptr guiMainWindow_;
 	sfg::Desktop guiDesktop_;
@@ -41,6 +44,8 @@ private:
 	void handleResize(int width, int height);
 	void handleClick(sf::Vector2i position);
 	void handleKeyPress(sf::Keyboard::Key key);
+
+	void createWonPopup();
 
 public:
 	LevelGameState(Game & game, std::istream & source);

@@ -6,11 +6,13 @@
 #include "../Tower/TowerFactory.hpp"
 #include "../Game.hpp"
 #include "LevelGameState.hpp"
+#include "MenuGameState.hpp"
 
 static const int RIGHT_PANEL_WIDTH = 200;
 
 LevelGameState::LevelGameState(Game & game, std::istream & source)
-	: level_(std::make_shared<Level>(source))
+	: game_(game)
+	, level_(std::make_shared<Level>(source))
 	, levelInstance_(new LevelInstance(level_))
 	, oldCash_(-1)
 	, isPlacingTower_(false)
@@ -19,10 +21,10 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 	guiCashLabel_->SetRequisition({ 0.f, 16.f });
 	guiCashLabel_->SetAlignment({ 0.f, 0.f });
 
-	auto guiGameStartButton = sfg::Button::Create("Send creeps");
-	guiGameStartButton->GetSignal(sfg::Button::OnLeftClick).Connect([this, guiGameStartButton]() {
+	guiGameStartButton_ = sfg::Button::Create("Send creeps");
+	guiGameStartButton_->GetSignal(sfg::Button::OnLeftClick).Connect([this]() {
 		levelInstance_->startWaves();
-		guiGameStartButton->SetState(sfg::Widget::State::INSENSITIVE);
+		guiGameStartButton_->SetState(sfg::Widget::State::INSENSITIVE);
 	});
 
 	guiInfoPanelLocation_ = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
@@ -30,7 +32,7 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 	auto guiMainLayout = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
 	guiMainLayout->PackEnd(guiCashLabel_, false);
 	createTowerCreationButtons(guiMainLayout);
-	guiMainLayout->PackEnd(guiGameStartButton, false);
+	guiMainLayout->PackEnd(guiGameStartButton_, false);
 	guiMainLayout->PackEnd(guiInfoPanelLocation_, false);
 
 	guiMainWindow_ = sfg::Window::Create(sfg::Window::Style::BACKGROUND);
@@ -125,6 +127,25 @@ void LevelGameState::handleKeyPress(sf::Keyboard::Key key)
 	}
 }
 
+void LevelGameState::createWonPopup()
+{
+	guiWonWindow_ = sfg::Window::Create();
+	guiWonWindow_->SetTitle("Success!");
+
+	auto label = sfg::Label::Create("You won!");
+	auto button = sfg::Button::Create("OK");
+	button->GetSignal(sfg::Button::OnLeftClick).Connect([&]() {
+		game_.setNextState(std::make_unique<MenuGameState>(game_));
+	});
+
+	auto layout = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+	layout->PackEnd(label, false);
+	layout->PackEnd(button, true);
+
+	guiWonWindow_->Add(layout);
+	guiDesktop_.Add(guiWonWindow_);
+}
+
 void LevelGameState::update()
 {
 	guiDesktop_.Update(Constants::FPS);
@@ -135,6 +156,10 @@ void LevelGameState::update()
 		oldCash_ = newCash;
 		guiCashLabel_->SetText("Cash: " + std::to_string(newCash));
 	}
+
+	// Check if the game has been won
+	if (levelInstance_->hasWon() && !guiWonWindow_)
+		createWonPopup();
 }
 
 void LevelGameState::render(sf::RenderTarget & target)

@@ -99,7 +99,7 @@ void InvasionManager::spawn(std::shared_ptr<LevelInstance> levelInstance, int64_
 
 bool InvasionManager::invasionEnded(int64_t moment) const
 {
-	return invasionPlan_.empty() || (invasionPlan_.back().moment > moment);
+	return invasionPlan_.empty() || (invasionPlan_.back().moment < moment);
 }
 
 const std::vector<sf::Vector2i> & InvasionManager::getSpawnPoints() const
