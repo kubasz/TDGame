@@ -65,7 +65,9 @@ class GridTowerPlacementOracle final : public TowerPlacementOracle<sf::Vector2i>
 {
 private:
 	LevelInstance & levelInstance_;
+	std::unique_ptr<bool[]> permanentlyOccupied_;
 	std::unique_ptr<bool[]> validTurretPlaces_;
+	std::unique_ptr<bool[]> occupiedByCreeps_;
 	std::unique_ptr<int32_t[]> parents_;
 	std::unique_ptr<int32_t[]> pre_;
 	std::unique_ptr<int32_t[]> low_;
@@ -77,8 +79,11 @@ public:
 	//! Draws places suitable for Tower placement.
 	void render(sf::RenderTarget & target);
 
-	//! Updates tower placement info.
-	void update();
+	//! Updates information about positions restricted by Towers.
+	void updateTowerRestrictions();
+
+	//! Updates information about positions restricted by Creeps.
+	void updateCreepRestrictions();
 };
 
 //! A factory creating Creeps and adding them to the world at appropriate times.
@@ -194,6 +199,11 @@ public:
 	void startWaves()
 	{
 		wavesRunning_ = true;
+	}
+
+	const std::vector<std::shared_ptr<Creep>> & getCreeps() const
+	{
+		return creeps_;
 	}
 
 	//! Returns a control widget for an object selected by mouse position.

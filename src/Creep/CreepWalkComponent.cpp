@@ -4,6 +4,7 @@
 
 CreepGridWalkComponent::CreepGridWalkComponent(sf::Vector2i initialPosition)
 {
+	gridPosition_.points[0] = initialPosition;
 	gridPosition_.points[1] = initialPosition;
 	gridPosition_.progress = 1.f;
 }
@@ -35,6 +36,11 @@ sf::Vector2f CreepGridWalkComponent::getPosition() const
 sf::Vector2f CreepGridWalkComponent::getFacingDirection() const
 {
 	return direction_;
+}
+
+std::vector<sf::Vector2i> CreepGridWalkComponent::getOccupiedTurretPositions() const
+{
+	return { gridPosition_.points[0], gridPosition_.points[1] };
 }
 
 bool CreepGridWalkComponent::hasReachedGoal() const

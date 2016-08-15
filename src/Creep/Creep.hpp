@@ -71,6 +71,11 @@ public:
 	{
 		return bounty_;
 	}
+
+	inline std::vector<sf::Vector2i> getOccupiedTurretPositions() const
+	{
+		return walkComponent_->getOccupiedTurretPositions();
+	}
 };
 
 #endif // TDF_CREEP_HPP

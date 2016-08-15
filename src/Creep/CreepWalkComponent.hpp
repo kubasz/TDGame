@@ -4,6 +4,7 @@
 #define TDF_CREEP_WALK_COMPONENT_HPP
 
 #include <array>
+#include <vector>
 #include <SFML/System.hpp>
 
 template<typename P> class NavigationProvider;
@@ -19,6 +20,9 @@ public:
 
 	virtual sf::Vector2f getPosition() const = 0;
 	virtual sf::Vector2f getFacingDirection() const = 0;
+
+	//! Returns which Turret positions are occupied by this Creep.
+	virtual std::vector<sf::Vector2i> getOccupiedTurretPositions() const = 0;
 	virtual bool hasReachedGoal() const = 0;
 };
 
@@ -41,6 +45,7 @@ public:
 	virtual void update(NavigationProvider<sf::Vector2i> & navigation) override;
 	virtual sf::Vector2f getPosition() const override;
 	virtual sf::Vector2f getFacingDirection() const override;
+	virtual std::vector<sf::Vector2i> getOccupiedTurretPositions() const override;
 	virtual bool hasReachedGoal() const override;
 };
 

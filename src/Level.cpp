@@ -102,12 +102,27 @@ GridTowerPlacementOracle::GridTowerPlacementOracle(LevelInstance & levelInstance
 {
 	auto level = levelInstance.getLevel();
 	const int32_t tableSize = level->getWidth() * level->getHeight();
+	permanentlyOccupied_.reset(new bool[tableSize]);
 	validTurretPlaces_.reset(new bool[tableSize]);
+	occupiedByCreeps_.reset(new bool[tableSize]);
 	parents_.reset(new int32_t[tableSize]);
 	pre_.reset(new int32_t[tableSize]);
 	low_.reset(new int32_t[tableSize]);
 
-	update();
+	const int32_t width = levelInstance_.getLevel()->getWidth();
+	std::fill(permanentlyOccupied_.get(), permanentlyOccupied_.get() + tableSize, false);
+
+	// Forbid placing on goals, as it may be a non-articulation point
+	const auto goal = levelInstance_.getLevel()->getGoal();
+	const auto goalIndex = goal.y * width + goal.x;
+	permanentlyOccupied_[goalIndex] = true;
+
+	// Forbid placing on spawn points
+	for (const auto & spawnPoint : levelInstance_.getLevel()->getInvasionManager().getSpawnPoints())
+		permanentlyOccupied_[spawnPoint.y * width + spawnPoint.x] = true;
+
+	updateTowerRestrictions();
+	updateCreepRestrictions();
 }
 
 bool GridTowerPlacementOracle::canPlaceTowerHere(const sf::Vector2i & at) const
@@ -115,8 +130,10 @@ bool GridTowerPlacementOracle::canPlaceTowerHere(const sf::Vector2i & at) const
 	const auto width = levelInstance_.getLevel()->getWidth();
 	const auto height = levelInstance_.getLevel()->getHeight();
 
-	if (at.x >= 0 && at.y >= 0 && at.x < width && at.y < height)
-		return validTurretPlaces_[at.y * width + at.x];
+	if (at.x >= 0 && at.y >= 0 && at.x < width && at.y < height) {
+		const auto index = at.y * width + at.x;
+		return !permanentlyOccupied_[index] && validTurretPlaces_[index] && !occupiedByCreeps_[index];
+	}
 
 	return false;
 }
@@ -133,7 +150,7 @@ void GridTowerPlacementOracle::render(sf::RenderTarget & target)
 
 	for (int y = 0; y < height; y++) {
 		for (int x = 0; x < width; x++) {
-			if (validTurretPlaces_[y * width + x]) {
+			if (canPlaceTowerHere({ x, y })) {
 				rs.setPosition((float)x, (float)y);
 				target.draw(rs);
 			}
@@ -141,7 +158,7 @@ void GridTowerPlacementOracle::render(sf::RenderTarget & target)
 	}
 }
 
-void GridTowerPlacementOracle::update()
+void GridTowerPlacementOracle::updateTowerRestrictions()
 {
 	// The algorithm marks articulation points, creep sources and the goal
 	// as unsuitable to place a tower on. Every other point is marked as
@@ -150,7 +167,6 @@ void GridTowerPlacementOracle::update()
 	// TODO: This algorithm marks invalid points too eagerly, as some
 	// articulation points are still valid turret placement points
 	// (e.g. dead-end corridors leading neither to a source nor the goal).
-	// TODO: Mark creep sources
 	static const int32_t EMPTY = -1;
 	static const int32_t ROOT = -2;
 	const int32_t width = levelInstance_.getLevel()->getWidth();
@@ -232,12 +248,22 @@ void GridTowerPlacementOracle::update()
 
 		}
 	}
+}
 
-	validTurretPlaces_[goalIndex] = false;
+void GridTowerPlacementOracle::updateCreepRestrictions()
+{
+	const int32_t width = levelInstance_.getLevel()->getWidth();
+	const int32_t height = levelInstance_.getLevel()->getHeight();
+	const int32_t tableSize = width * height;
 
-	// TODO: Ughh
-	for (const auto & spawnPoint : levelInstance_.getLevel()->getInvasionManager().getSpawnPoints())
-		validTurretPlaces_[spawnPoint.y * width + spawnPoint.x] = false;
+	std::fill(occupiedByCreeps_.get(), occupiedByCreeps_.get() + tableSize, false);
+
+	// Forbid placing on fields occupied by Creeps
+	for (const auto & creep : levelInstance_.getCreeps()) {
+		for (auto point : creep->getOccupiedTurretPositions()) {
+			occupiedByCreeps_[point.y * width + point.x] = true;
+		}
+	}
 }
 
 NavigationProvider<sf::Vector2i> & LevelInstance::getGoalNavigationProvider()
@@ -247,8 +273,13 @@ NavigationProvider<sf::Vector2i> & LevelInstance::getGoalNavigationProvider()
 
 std::shared_ptr<Tower> LevelInstance::getTowerAt(sf::Vector2i position)
 {
-	// TODO: Bounds checking maybe?
-	return towerMap_[position.y * level_->getWidth() + position.x];
+	const auto width = level_->getWidth();
+	const auto height = level_->getHeight();
+
+	if (position.x >= 0 && position.y >= 0 && position.x < width && position.y < height)
+		return towerMap_[position.y * width + position.x];
+
+	return nullptr;
 }
 
 InvasionManager::InvasionManager(const json & data)
@@ -386,7 +417,7 @@ bool LevelInstance::createTowerAt(const std::string & name, sf::Vector2i positio
 	towerMap_[position.y * level_->getWidth() + position.x] = tower;
 
 	gridNavigation_.update();
-	gridTowerPlacement_.update();
+	gridTowerPlacement_.updateTowerRestrictions();
 	money_ -= typeInfo.cost;
 
 	return true;
@@ -453,6 +484,8 @@ void LevelInstance::update()
 
 	if (wavesRunning_)
 		++currentFrame_;
+	
+	gridTowerPlacement_.updateCreepRestrictions();
 }
 
 void LevelInstance::render(sf::RenderTarget & target)
