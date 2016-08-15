@@ -1,5 +1,6 @@
 #include <memory>
 #include <string>
+#include "../MakeUnique.hpp"
 #include "Creep.hpp"
 #include "CreepFactory.hpp"
 #include "CreepLifeDisplayComponent.hpp"
@@ -10,14 +11,14 @@ std::shared_ptr<Creep> CreepFactory::createCreep(
 	sf::Vector2i position)
 {
 	if (typeName == "GenericCreep") {
-		auto walk = std::unique_ptr<CreepGridWalkComponent>(new CreepGridWalkComponent(position));
-		auto dotDisplay = std::unique_ptr<CreepDotDisplayComponent>(new CreepDotDisplayComponent(*walk.get(), 0.125f));
+		auto walk = std::make_unique<CreepGridWalkComponent>(position);
+		auto dotDisplay = std::make_unique<CreepDotDisplayComponent>(*walk.get(), 0.125f);
 
-		auto lifeDisplay = std::unique_ptr<CreepLifeDisplayComponent>(new CreepLifeDisplayComponent(
-			sf::Vector2f(0.f, 0.5f), sf::Vector2f(0.8f, 0.2f), true));
+		auto lifeDisplay = std::make_unique<CreepLifeDisplayComponent>(
+			sf::Vector2f(0.f, 0.5f), sf::Vector2f(0.8f, 0.2f), true);
 		auto lifeDisplayDirect = lifeDisplay.get();
 
-		auto compositeDisplay = std::unique_ptr<CreepCompositeDisplayComponent>(new CreepCompositeDisplayComponent());
+		auto compositeDisplay = std::make_unique<CreepCompositeDisplayComponent>();
 		compositeDisplay->addChild(std::move(dotDisplay));
 		compositeDisplay->addChild(std::move(lifeDisplay));
 

@@ -2,6 +2,7 @@
 #include <iostream>
 #include <SFGUI/Renderers.hpp>
 
+#include "MakeUnique.hpp"
 #include "Game.hpp"
 #include "GameStates/GameState.hpp"
 #include "GameStates/MenuGameState.hpp"
@@ -28,7 +29,7 @@ Game::Game(int argc, char ** argv)
 	window_.setFramerateLimit(60);
 	window_.setActive();
 
-	setNextState(std::unique_ptr<MenuGameState>(new MenuGameState(*this)));
+	setNextState(std::make_unique<MenuGameState>(*this));
 }
 
 Game::~Game()
