@@ -12,7 +12,6 @@
 #include "TowerShootingComponent.hpp"
 #include "TowerTargetingComponent.hpp"
 
-// TODO: Move somewhere else
 class Upgradeable
 {
 public:

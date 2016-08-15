@@ -23,10 +23,12 @@ sf::Vector2i GridNavigationProvider::getGoal() const
 
 sf::Vector2i GridNavigationProvider::getNextStep(const sf::Vector2i & point) const
 {
-	// TODO: Bound checking
+	assert(levelInstance_.getLevel()->pointLiesOnGrid(point));
+
 	const int32_t fromIndex = point.y * levelInstance_.getLevel()->getWidth() + point.x;
 	const int32_t toIndex = path_[fromIndex];
 	const int32_t width = levelInstance_.getLevel()->getWidth();
+
 	return{ toIndex % width, toIndex / width };
 }
 
@@ -62,8 +64,8 @@ void GridNavigationProvider::update()
 
 		path_[current] = previous;
 
-		const int32_t x = current % width; // TODO: Optimize and move around coordinates
-		const int32_t y = current / width; //       instead of performing division
+		const int32_t x = current % width;
+		const int32_t y = current / width;
 
 		auto tryPushVertex = [&](int32_t next)
 		{
@@ -72,7 +74,6 @@ void GridNavigationProvider::update()
 			}
 		};
 
-		// TODO: Abstract this pattern somewhere else?
 		if (y < height - 1)
 			tryPushVertex(current + width);
 		if (y > 0)
@@ -116,9 +117,8 @@ GridTowerPlacementOracle::GridTowerPlacementOracle(LevelInstance & levelInstance
 bool GridTowerPlacementOracle::canPlaceTowerHere(const sf::Vector2i & at) const
 {
 	const auto width = levelInstance_.getLevel()->getWidth();
-	const auto height = levelInstance_.getLevel()->getHeight();
 
-	if (at.x >= 0 && at.y >= 0 && at.x < width && at.y < height) {
+	if (levelInstance_.getLevel()->pointLiesOnGrid(at)) {
 		const auto index = at.y * width + at.x;
 		return !permanentlyOccupied_[index] && validTurretPlaces_[index] && !occupiedByCreeps_[index];
 	}

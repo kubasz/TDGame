@@ -12,8 +12,6 @@
 #include "GameState.hpp"
 #include "../Level.hpp"
 
-// TODO: Separate tower placing logic from this class
-
 class Game;
 
 class LevelGameState final : public GameState

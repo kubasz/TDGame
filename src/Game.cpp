@@ -19,7 +19,6 @@ Game::Game(int argc, char ** argv)
 	srand((unsigned int)time(nullptr));
 	sfg::Renderer::Set(sfg::VertexArrayRenderer::Create());
 
-	// TODO: Add possibility to change title (global settings or smth)
 	const sf::Uint32 style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
 	window_.create(sf::VideoMode(640, 480), "TDFramework", style);
 	if (!window_.isOpen())

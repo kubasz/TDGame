@@ -14,6 +14,7 @@
 #include "../Game.hpp"
 #include "LevelGameState.hpp"
 #include "LevelSelectGameState.hpp"
+#include "../ScopeGuard.hpp"
 
 // TODO: Implement GetFullPathName equivalent for Linux
 
@@ -28,12 +29,14 @@ LevelSelectGameState::LevelSelectGameState(Game & game)
 
 void LevelSelectGameState::setPath(const std::string & path)
 {
-	// TODO: Proper error handling
 	auto layout = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
 
 	DIR * dirp = opendir(path.c_str());
 	if (!dirp)
 		return;
+
+	// This calls closedir(dirp) on function exit (also when exception is thrown)
+	ScopeGuard dirpGuard(std::bind(closedir, dirp));
 
 	std::vector<std::pair<bool, std::string>> entries;
 	std::shared_ptr<std::string> pathShared = std::make_shared<std::string>(path);
@@ -71,8 +74,6 @@ void LevelSelectGameState::setPath(const std::string & path)
 	guiScrolledWindow->AddWithViewport(layout);
 
 	guiNextLayout_ = std::move(guiScrolledWindow);
-
-	closedir(dirp);
 }
 
 void LevelSelectGameState::update()

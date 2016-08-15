@@ -88,6 +88,11 @@ public:
 	{
 		return *invasionManager_.get();
 	}
+	bool pointLiesOnGrid(sf::Vector2i position) const
+	{
+		return (position.x >= 0) && (position.x < width_)
+			&& (position.y >= 0) && (position.y < height_);
+	}
 };
 
 class Creep;

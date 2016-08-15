@@ -20,11 +20,8 @@ NavigationProvider<sf::Vector2i> & LevelInstance::getGoalNavigationProvider()
 
 std::shared_ptr<Tower> LevelInstance::getTowerAt(sf::Vector2i position)
 {
-	const auto width = level_->getWidth();
-	const auto height = level_->getHeight();
-
-	if (position.x >= 0 && position.y >= 0 && position.x < width && position.y < height)
-		return towerMap_[position.y * width + position.x];
+	if (level_->pointLiesOnGrid(position))
+		return towerMap_[position.y * level_->getWidth() + position.x];
 
 	return nullptr;
 }
@@ -152,7 +149,9 @@ std::shared_ptr<Selectable> LevelInstance::selectAt(sf::Vector2f position)
 
 bool LevelInstance::createTowerAt(const std::string & name, sf::Vector2i position)
 {
-	// TODO: Bounds checking maybe?
+	if (!level_->pointLiesOnGrid(position))
+		return false;
+	
 	const auto typeInfo = TowerFactory::getTowerTypeInfo(name);
 	if (typeInfo.cost > money_)
 		return false;
