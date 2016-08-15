@@ -8,9 +8,10 @@ std::shared_ptr<Bullet> BulletFactory::innerCreateBullet(
 	const std::string & bulletName) const
 {
 	if (bulletName == "GenericBullet") {
-		auto movement = std::make_unique<BulletTimedMovementComponent>(
-			1.f, target_, 20, position_);
-		auto display = std::make_unique<BulletSimpleDisplayComponent>(0.0625f, *movement.get());
+		auto movement = std::unique_ptr<BulletTimedMovementComponent>(new BulletTimedMovementComponent(
+			1.f, target_, 20, position_));
+		auto display = std::unique_ptr<BulletSimpleDisplayComponent>(
+			new BulletSimpleDisplayComponent(0.0625f, *movement.get()));
 		return std::make_shared<Bullet>(std::move(movement), std::move(display));
 	}
 

@@ -8,8 +8,7 @@ MenuGameState::MenuGameState(Game & game)
 {
 	auto guiChooseLevel = sfg::Button::Create("Choose level");
 	guiChooseLevel->GetSignal(sfg::Button::OnLeftClick).Connect([this]() {
-		// game_.setNextState(GameState::Identifier::LEVEL);
-		game_.setNextState(std::make_unique<LevelSelectGameState>(game_));
+		game_.setNextState(std::unique_ptr<LevelSelectGameState>(new LevelSelectGameState(game_)));
 	});
 
 	auto guiExit = sfg::Button::Create("Exit");

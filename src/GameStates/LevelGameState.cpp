@@ -135,7 +135,7 @@ void LevelGameState::createWonPopup()
 	auto label = sfg::Label::Create("You won!");
 	auto button = sfg::Button::Create("OK");
 	button->GetSignal(sfg::Button::OnLeftClick).Connect([&]() {
-		game_.setNextState(std::make_unique<MenuGameState>(game_));
+		game_.setNextState(std::unique_ptr<MenuGameState>(new MenuGameState(game_)));
 	});
 
 	auto layout = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);

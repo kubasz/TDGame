@@ -54,7 +54,8 @@ void LevelSelectGameState::setPath(const std::string & path)
 				// This is a file
 				try {
 					std::ifstream source(path);
-					game_.setNextState(std::make_unique<LevelGameState>(game_, source));
+					game_.setNextState(std::unique_ptr<LevelGameState>(
+						new LevelGameState(game_, source)));
 				}
 				catch (std::logic_error&) {
 					popupLevelReadError();

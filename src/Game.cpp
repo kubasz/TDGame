@@ -28,7 +28,7 @@ Game::Game(int argc, char ** argv)
 	window_.setFramerateLimit(60);
 	window_.setActive();
 
-	setNextState(std::make_unique<MenuGameState>(*this));
+	setNextState(std::unique_ptr<MenuGameState>(new MenuGameState(*this)));
 }
 
 Game::~Game()
