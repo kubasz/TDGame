@@ -19,11 +19,18 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 	guiCashLabel_->SetRequisition({ 0.f, 16.f });
 	guiCashLabel_->SetAlignment({ 0.f, 0.f });
 
+	auto guiGameStartButton = sfg::Button::Create("Send creeps");
+	guiGameStartButton->GetSignal(sfg::Button::OnLeftClick).Connect([this, guiGameStartButton]() {
+		levelInstance_->startWaves();
+		guiGameStartButton->SetState(sfg::Widget::State::INSENSITIVE);
+	});
+
 	guiInfoPanelLocation_ = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
 
 	auto guiMainLayout = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
 	guiMainLayout->PackEnd(guiCashLabel_, false);
 	createTowerCreationButtons(guiMainLayout);
+	guiMainLayout->PackEnd(guiGameStartButton, false);
 	guiMainLayout->PackEnd(guiInfoPanelLocation_, false);
 
 	guiMainWindow_ = sfg::Window::Create(sfg::Window::Style::BACKGROUND);

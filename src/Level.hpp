@@ -165,6 +165,7 @@ private:
 	GridNavigationProvider gridNavigation_;
 	GridTowerPlacementOracle gridTowerPlacement_;
 	int64_t currentFrame_;
+	bool wavesRunning_;
 	int64_t money_;
 
 public:
@@ -188,6 +189,11 @@ public:
 	int64_t getMoney() const
 	{
 		return money_;
+	}
+
+	void startWaves()
+	{
+		wavesRunning_ = true;
 	}
 
 	//! Returns a control widget for an object selected by mouse position.

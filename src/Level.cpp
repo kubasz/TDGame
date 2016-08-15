@@ -351,6 +351,7 @@ LevelInstance::LevelInstance(std::shared_ptr<Level> level)
 	, gridNavigation_(*this, level->getGoal())
 	, gridTowerPlacement_(*this)
 	, currentFrame_(0)
+	, wavesRunning_(false)
 	, money_(level->getStartingMoney())
 {
 	for (auto source : level->getInvasionManager().getSpawnPoints())
@@ -426,7 +427,8 @@ static void removeDeadEntities(std::vector<std::weak_ptr<Entity>> & entities)
 
 void LevelInstance::update()
 {
-	level_->getInvasionManager().spawn(shared_from_this(), currentFrame_);
+	if (wavesRunning_)
+		level_->getInvasionManager().spawn(shared_from_this(), currentFrame_);
 
 	for (auto & decoration : decorations_)
 		decoration->update();
@@ -449,7 +451,8 @@ void LevelInstance::update()
 	}
 	removeDeadEntities(creeps_);
 
-	++currentFrame_;
+	if (wavesRunning_)
+		++currentFrame_;
 }
 
 void LevelInstance::render(sf::RenderTarget & target)

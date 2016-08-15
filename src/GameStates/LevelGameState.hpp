@@ -40,8 +40,6 @@ private:
 	void createTowerCreationButtons(const sfg::Box::Ptr & layout);
 	void centerView();
 
-	// TODO: Convert these handlers to Thor dispatcher ?
-
 	void handleResize(int width, int height);
 	void handleClick(sf::Vector2i position);
 	void handleKeyPress(sf::Keyboard::Key key);
