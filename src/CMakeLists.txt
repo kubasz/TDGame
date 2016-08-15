@@ -15,6 +15,7 @@ set(SOURCES
 	GameStates/LevelSelectGameState.cpp
 	GameStates/MenuGameState.cpp
 	Level.cpp
+	LevelServices.cpp
 	Tower/Tower.cpp
 	Tower/TowerDisplayComponent.cpp
 	Tower/TowerFactory.cpp
