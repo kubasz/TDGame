@@ -28,9 +28,5 @@ set(LIBS
 	${THOR_LIBRARY}
 )
 
-if (TDGAME_STATIC)
-	set(LIBS "${LIBS} ${SFGUI_DEPENDENCIES}")
-endif ()
-
 add_executable(TDGame ${SOURCES})
 target_link_libraries(TDGame ${LIBS})

@@ -1,13 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 project(TDGame)
 
-option(TDGAME_STATIC "Link all libraries statically" ON)
-
-if (TDGAME_STATIC)
-	set(SFML_STATIC true)
-	set(SFGUI_STATIC_LIBRARIES true)
-endif ()
-
 if (NOT MSVC)
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++14")
 endif ()
