@@ -65,6 +65,7 @@ private:
 	std::unique_ptr<InvasionManager> invasionManager_;
 	sf::Vector2i goal_;
 	int64_t startingMoney_;
+	int64_t startingLives_;
 
 public:
 	Level(std::istream & source);
@@ -83,6 +84,10 @@ public:
 	int64_t getStartingMoney() const
 	{
 		return startingMoney_;
+	}
+	int64_t getStartingLives() const
+	{
+		return startingLives_;
 	}
 	InvasionManager & getInvasionManager()
 	{
@@ -114,6 +119,7 @@ private:
 	double currentTime_;
 	bool wavesRunning_;
 	int64_t money_;
+	int64_t lives_;
 
 public:
 	LevelInstance(std::shared_ptr<Level> level);
@@ -138,6 +144,11 @@ public:
 		return money_;
 	}
 
+	int64_t getLives() const
+	{
+		return lives_;
+	}
+
 	void startWaves()
 	{
 		wavesRunning_ = true;
@@ -151,6 +162,11 @@ public:
 	bool hasWon() const
 	{
 		return creeps_.empty() && level_->getInvasionManager().invasionEnded(currentTime_);
+	}
+
+	bool hasLost() const
+	{
+		return getLives() <= 0;
 	}
 
 	//! Returns a control widget for an object selected by mouse position.

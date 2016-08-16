@@ -1,5 +1,6 @@
 {
 	"name": "Sample level",
+	"starting-lives": 10,
 	"starting-money": 100,
 	"grid-size": [ 16, 16 ],
 	"goal": [ 8, 8 ],

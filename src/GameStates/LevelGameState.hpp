@@ -21,10 +21,12 @@ private:
 	std::shared_ptr<Level> level_;
 	std::shared_ptr<LevelInstance> levelInstance_;
 	sfg::Label::Ptr guiCashLabel_;
+	sfg::Label::Ptr guiLivesLabel_;
 	sfg::Button::Ptr guiGameStartButton_;
 	sfg::Box::Ptr guiInfoPanelLocation_;
-	sfg::Window::Ptr guiWonWindow_;
+	sfg::Window::Ptr guiStatusWindow_;
 	int64_t oldCash_;
+	int64_t oldLives_;
 	sfg::Window::Ptr guiMainWindow_;
 	sfg::Desktop guiDesktop_;
 	sf::View levelView_;
@@ -45,7 +47,9 @@ private:
 	void handleClick(sf::Vector2i position);
 	void handleKeyPress(sf::Keyboard::Key key);
 
+	void createEndingPopup(const std::string & title, const std::string & content);
 	void createWonPopup();
+	void createLostPopup();
 
 public:
 	LevelGameState(Game & game, std::istream & source);

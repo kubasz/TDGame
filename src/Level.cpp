@@ -120,6 +120,7 @@ Level::Level(std::istream & source)
 	height_ = levelDescription["grid-size"][1];
 	goal_ = { levelDescription["goal"][0], levelDescription["goal"][1] };
 	startingMoney_ = levelDescription["starting-money"];
+	startingLives_ = levelDescription["starting-lives"];
 
 	invasionManager_.reset(new InvasionManager(levelDescription));
 }
@@ -132,6 +133,7 @@ LevelInstance::LevelInstance(std::shared_ptr<Level> level)
 	, currentTime_(0.0)
 	, wavesRunning_(false)
 	, money_(level->getStartingMoney())
+	, lives_(level->getStartingLives())
 {
 	for (auto source : level->getInvasionManager().getSpawnPoints())
 		decorations_.push_back(std::make_shared<CreepSourceDecoration>(sf::Vector2f(source)));
@@ -186,24 +188,12 @@ void LevelInstance::registerBullet(std::shared_ptr<Bullet> bullet)
 	renderables_.push_back(bullet);
 }
 
-template<typename Entity>
-static void removeDeadEntities(std::vector<std::shared_ptr<Entity>> & entities)
+// TODO: Move somewhere else?
+template<typename T, typename F>
+static void removeFromVectorIf(std::vector<T> & v, F f)
 {
-	auto remover = [&](const std::shared_ptr<Entity> & entity)
-	{
-		return !entity->isAlive();
-	};
-
-	auto it = std::remove_if(entities.begin(), entities.end(), remover);
-	entities.resize(std::distance(entities.begin(), it));
-}
-
-template<typename Entity>
-static void removeDeadEntities(std::vector<std::weak_ptr<Entity>> & entities)
-{
-	auto it = std::remove_if(entities.begin(), entities.end(),
-		std::mem_fn(&std::weak_ptr<Entity>::expired));
-	entities.resize(std::distance(entities.begin(), it));
+	auto it = std::remove_if(v.begin(), v.end(), f);
+	v.resize(std::distance(v.begin(), it));
 }
 
 void LevelInstance::update()
@@ -223,14 +213,20 @@ void LevelInstance::update()
 
 	for (auto & bullet : bullets_)
 		bullet->update();
-	removeDeadEntities(bullets_);
+	removeFromVectorIf(bullets_, [&](const std::shared_ptr<Bullet> & b) {
+		return !b->isAlive();
+	});
 
 	for (auto & creep : creeps_) {
 		creep->update(gridNavigation_);
 		if (!creep->isAlive())
 			money_ += creep->getBounty();
+		else if (creep->hasReachedGoal())
+			lives_--;
 	}
-	removeDeadEntities(creeps_);
+	removeFromVectorIf(creeps_, [&](const std::shared_ptr<Creep> & c) {
+		return !c->isAlive() || c->hasReachedGoal();
+	});
 
 	if (wavesRunning_)
 		currentTime_ += Constants::FPS;
@@ -242,7 +238,8 @@ void LevelInstance::render(sf::RenderTarget & target)
 {
 	gridTowerPlacement_.render(target);
 
-	removeDeadEntities(renderables_);
+	// Remove all expired weak_ptrs
+	removeFromVectorIf(renderables_, std::mem_fn(&std::weak_ptr<Renderable>::expired));
 	for (auto & renderable : renderables_)
 		renderable.lock()->render(target);
 }

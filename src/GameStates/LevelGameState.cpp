@@ -16,11 +16,16 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 	, level_(std::make_shared<Level>(source))
 	, levelInstance_(new LevelInstance(level_))
 	, oldCash_(-1)
+	, oldLives_(-1)
 	, isPlacingTower_(false)
 {
 	guiCashLabel_ = sfg::Label::Create();
 	guiCashLabel_->SetRequisition({ 0.f, 16.f });
 	guiCashLabel_->SetAlignment({ 0.f, 0.f });
+
+	guiLivesLabel_ = sfg::Label::Create();
+	guiLivesLabel_->SetRequisition({ 0.f, 16.f });
+	guiLivesLabel_->SetAlignment({ 0.f, 0.f });
 
 	guiGameStartButton_ = sfg::Button::Create("Send creeps");
 	guiGameStartButton_->GetSignal(sfg::Button::OnLeftClick).Connect([this]() {
@@ -32,6 +37,7 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 
 	auto guiMainLayout = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
 	guiMainLayout->PackEnd(guiCashLabel_, false);
+	guiMainLayout->PackEnd(guiLivesLabel_, false);
 	createTowerCreationButtons(guiMainLayout);
 	guiMainLayout->PackEnd(guiGameStartButton_, false);
 	guiMainLayout->PackEnd(guiInfoPanelLocation_, false);
@@ -128,12 +134,12 @@ void LevelGameState::handleKeyPress(sf::Keyboard::Key key)
 	}
 }
 
-void LevelGameState::createWonPopup()
+void LevelGameState::createEndingPopup(const std::string & title, const std::string & content)
 {
-	guiWonWindow_ = sfg::Window::Create();
-	guiWonWindow_->SetTitle("Success!");
+	guiStatusWindow_ = sfg::Window::Create();
+	guiStatusWindow_->SetTitle(title);
 
-	auto label = sfg::Label::Create("You won!");
+	auto label = sfg::Label::Create(content);
 	auto button = sfg::Button::Create("OK");
 	button->GetSignal(sfg::Button::OnLeftClick).Connect([&]() {
 		game_.setNextState(std::make_unique<MenuGameState>(game_));
@@ -143,8 +149,18 @@ void LevelGameState::createWonPopup()
 	layout->PackEnd(label, false);
 	layout->PackEnd(button, true);
 
-	guiWonWindow_->Add(layout);
-	guiDesktop_.Add(guiWonWindow_);
+	guiStatusWindow_->Add(layout);
+	guiDesktop_.Add(guiStatusWindow_);
+}
+
+void LevelGameState::createWonPopup()
+{
+	createEndingPopup("Success!", "You won!");
+}
+
+void LevelGameState::createLostPopup()
+{
+	createEndingPopup("Failure!", "You lost!");
 }
 
 void LevelGameState::update()
@@ -158,9 +174,21 @@ void LevelGameState::update()
 		guiCashLabel_->SetText("Cash: " + std::to_string(newCash));
 	}
 
-	// Check if the game has been won
-	if (levelInstance_->hasWon() && !guiWonWindow_)
-		createWonPopup();
+	auto newLives = levelInstance_->getLives();
+	if (oldLives_ != newLives) {
+		oldLives_ = newLives;
+		guiLivesLabel_->SetText("Lives: " + std::to_string(newLives));
+	}
+
+	if (!guiStatusWindow_) {
+		// Check if the game has been won
+		if (levelInstance_->hasWon())
+			createWonPopup();
+
+		// Check if the game has been lost
+		else if (levelInstance_->hasLost())
+			createLostPopup();
+	}
 }
 
 void LevelGameState::render(sf::RenderTarget & target)
