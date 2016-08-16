@@ -22,11 +22,13 @@ private:
 	std::shared_ptr<LevelInstance> levelInstance_;
 	sfg::Label::Ptr guiCashLabel_;
 	sfg::Label::Ptr guiLivesLabel_;
+	sfg::Label::Ptr guiWaveLabel_;
 	sfg::Button::Ptr guiGameStartButton_;
 	sfg::Box::Ptr guiInfoPanelLocation_;
 	sfg::Window::Ptr guiStatusWindow_;
 	int64_t oldCash_;
 	int64_t oldLives_;
+	int64_t oldWave_;
 	sfg::Window::Ptr guiMainWindow_;
 	sfg::Desktop guiDesktop_;
 	sf::View levelView_;

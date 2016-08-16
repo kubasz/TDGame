@@ -41,20 +41,35 @@ private:
 		}
 	};
 
-	std::vector<creationInfo_t> invasionPlan_;
+	struct wave_t
+	{
+		sf::Time startMoment;
+		std::vector<creationInfo_t> invasionSchedule;
+	};
+
+	std::vector<wave_t> waves_;
 	std::vector<sf::Vector2i> spawnPoints_;
+	int32_t creepsRemaining_;
+	int32_t currentWave_;
+	sf::Time moment_;
 
 public:
 	InvasionManager(const nlohmann::json & data);
+	InvasionManager(const InvasionManager & other) = default;
 
 	//! Spawns creeps for the given moment of time.
-	void spawn(std::shared_ptr<LevelInstance> levelInstance, sf::Time moment, sf::Time duration);
+	void spawn(std::shared_ptr<LevelInstance> levelInstance, sf::Time dt);
 
 	//! Returns if all creeps were already spawned before this moment.
-	bool invasionEnded(sf::Time moment) const;
+	bool invasionEnded() const;
 
 	//! Returns all points on which Creeps can spawn.
 	const std::vector<sf::Vector2i> & getSpawnPoints() const;
+
+	//! Immediately sends next wave.
+	void sendNextWave();
+
+	int32_t getWaveNumber() const;
 };
 
 //! Contains static information about a level.
@@ -89,7 +104,7 @@ public:
 	{
 		return startingLives_;
 	}
-	InvasionManager & getInvasionManager()
+	const InvasionManager & cloneInvasionManager() const
 	{
 		return *invasionManager_.get();
 	}
@@ -114,6 +129,7 @@ private:
 	std::vector<std::shared_ptr<Decoration>> decorations_;
 	std::vector<std::shared_ptr<Tower>> towers_;
 	std::vector<std::weak_ptr<Renderable>> renderables_;
+	InvasionManager invasionManager_;
 	GridNavigationProvider gridNavigation_;
 	GridTowerPlacementOracle gridTowerPlacement_;
 	sf::Time currentTime_;
@@ -149,7 +165,7 @@ public:
 		return lives_;
 	}
 
-	void startWaves()
+	void resume()
 	{
 		wavesRunning_ = true;
 	}
@@ -161,12 +177,17 @@ public:
 
 	bool hasWon() const
 	{
-		return creeps_.empty() && level_->getInvasionManager().invasionEnded(currentTime_);
+		return creeps_.empty() && invasionManager_.invasionEnded();
 	}
 
 	bool hasLost() const
 	{
 		return getLives() <= 0;
+	}
+
+	InvasionManager & getInvasionManager()
+	{
+		return invasionManager_;
 	}
 
 	//! Returns a control widget for an object selected by mouse position.

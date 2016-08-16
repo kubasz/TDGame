@@ -107,7 +107,7 @@ GridTowerPlacementOracle::GridTowerPlacementOracle(LevelInstance & levelInstance
 	permanentlyOccupied_[goalIndex] = true;
 
 	// Forbid placing on spawn points
-	for (const auto & spawnPoint : levelInstance_.getLevel()->getInvasionManager().getSpawnPoints())
+	for (const auto & spawnPoint : levelInstance_.getInvasionManager().getSpawnPoints())
 		permanentlyOccupied_[spawnPoint.y * width + spawnPoint.x] = true;
 
 	updateTowerRestrictions();

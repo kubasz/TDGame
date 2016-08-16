@@ -27,6 +27,8 @@ std::shared_ptr<Tower> LevelInstance::getTowerAt(sf::Vector2i position)
 }
 
 InvasionManager::InvasionManager(const json & data)
+	: creepsRemaining_(0)
+	, currentWave_(-1)
 {
 	auto cmpPoints = [](const sf::Vector2i & a, const sf::Vector2i & b) -> bool {
 		if (a.x == b.x)
@@ -38,7 +40,8 @@ InvasionManager::InvasionManager(const json & data)
 
 	// We are interested in the "waves" table
 	for (const auto & wave : data["waves"]) {
-		const sf::Time startTime = sf::seconds((double)wave["start-time"]);
+		wave_t waveData;
+		waveData.startMoment = sf::seconds((double)wave["start-time"]);
 
 		// Calculate spawn moments for the given description
 		for (const auto & creepDesc : wave["creeps"]) {
@@ -52,10 +55,10 @@ InvasionManager::InvasionManager(const json & data)
 			knownSpawnPoints.insert(spawnAt);
 
 			auto addInfo = [&](sf::Time waveTime) {
-				invasionPlan_.push_back({
-					startTime + waveTime,
-					type, spawnAt, hp, bounty
+				waveData.invasionSchedule.push_back({
+					waveTime, type, spawnAt, hp, bounty
 				});
+				++creepsRemaining_;
 			};
 
 			const auto & spawnTime = creepDesc["spawn-time"];
@@ -78,36 +81,69 @@ InvasionManager::InvasionManager(const json & data)
 				throw std::runtime_error("Invalid type of spawnTime");
 			}
 		}
+
+		std::sort(waveData.invasionSchedule.begin(), waveData.invasionSchedule.end());
+		waves_.emplace_back(std::move(waveData));
 	}
 
-	std::sort(invasionPlan_.begin(), invasionPlan_.end());
 	std::copy(knownSpawnPoints.begin(), knownSpawnPoints.end(),
 		std::back_inserter(spawnPoints_));
 }
 
-void InvasionManager::spawn(std::shared_ptr<LevelInstance> levelInstance, sf::Time moment, sf::Time duration)
+void InvasionManager::spawn(std::shared_ptr<LevelInstance> levelInstance, sf::Time dt)
 {
 	// Damn you, c++
 	creationInfo_t start, end;
-	start.moment = moment;
-	end.moment = moment + duration;
 
-	const auto from = std::lower_bound(invasionPlan_.begin(), invasionPlan_.end(), start);
-	const auto to = std::lower_bound(invasionPlan_.begin(), invasionPlan_.end(), end);
+	int32_t waveID = 0;
+	for (const auto & wave : waves_) {
+		if (wave.startMoment > moment_ + dt)
+			break; // We can omit later waves
 
-	for (auto it = from; it != to; ++it) {
-		levelInstance->createCreepAt(it->creepName, it->life, it->bounty, it->position);
+		currentWave_ = std::max(currentWave_, waveID);
+		start.moment = moment_ - wave.startMoment;
+		end.moment = moment_ + dt - wave.startMoment;
+
+		const auto from = std::lower_bound(wave.invasionSchedule.begin(), wave.invasionSchedule.end(), start);
+		const auto to = std::lower_bound(wave.invasionSchedule.begin(), wave.invasionSchedule.end(), end);
+
+		for (auto it = from; it != to; ++it) {
+			levelInstance->createCreepAt(it->creepName, it->life, it->bounty, it->position);
+			--creepsRemaining_;
+		}
+
+		++waveID;
 	}
+
+	moment_ += dt;
 }
 
-bool InvasionManager::invasionEnded(sf::Time moment) const
+bool InvasionManager::invasionEnded() const
 {
-	return invasionPlan_.empty() || (invasionPlan_.back().moment < moment);
+	return creepsRemaining_ == 0;
 }
 
 const std::vector<sf::Vector2i> & InvasionManager::getSpawnPoints() const
 {
 	return spawnPoints_;
+}
+
+void InvasionManager::sendNextWave()
+{
+	const auto nextWave = currentWave_ + 1;
+	if (nextWave >= (int32_t)waves_.size())
+		return;
+	
+	const sf::Time delta = waves_[nextWave].startMoment - moment_;
+	for (uint32_t i = nextWave; i < waves_.size(); ++i)
+		waves_[i].startMoment -= delta;
+
+	currentWave_ = nextWave;
+}
+
+int32_t InvasionManager::getWaveNumber() const
+{
+	return currentWave_;
 }
 
 Level::Level(std::istream & source)
@@ -127,13 +163,14 @@ Level::Level(std::istream & source)
 LevelInstance::LevelInstance(std::shared_ptr<Level> level)
 	: level_(level)
 	, towerMap_(new std::shared_ptr<Tower>[level->getWidth() * level->getHeight()])
+	, invasionManager_(level_->cloneInvasionManager())
 	, gridNavigation_(*this, level->getGoal())
 	, gridTowerPlacement_(*this)
 	, wavesRunning_(false)
 	, money_(level->getStartingMoney())
 	, lives_(level->getStartingLives())
 {
-	for (auto source : level->getInvasionManager().getSpawnPoints())
+	for (auto source : invasionManager_.getSpawnPoints())
 		decorations_.push_back(std::make_shared<CreepSourceDecoration>(sf::Vector2f(source)));
 	decorations_.push_back(std::make_shared<GoalDecoration>(sf::Vector2f(level->getGoal())));
 
@@ -197,7 +234,7 @@ static void removeFromVectorIf(std::vector<T> & v, F f)
 void LevelInstance::update(sf::Time dt)
 {
 	if (wavesRunning_)
-		level_->getInvasionManager().spawn(shared_from_this(), currentTime_, dt);
+		invasionManager_.spawn(shared_from_this(), dt);
 
 	for (auto & decoration : decorations_)
 		decoration->update(dt);

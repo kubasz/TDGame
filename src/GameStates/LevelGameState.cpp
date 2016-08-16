@@ -16,6 +16,7 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 	, levelInstance_(new LevelInstance(level_))
 	, oldCash_(-1)
 	, oldLives_(-1)
+	, oldWave_(-2)
 	, isPlacingTower_(false)
 {
 	guiCashLabel_ = sfg::Label::Create();
@@ -26,10 +27,14 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 	guiLivesLabel_->SetRequisition({ 0.f, 16.f });
 	guiLivesLabel_->SetAlignment({ 0.f, 0.f });
 
+	guiWaveLabel_ = sfg::Label::Create();
+	guiWaveLabel_->SetRequisition({ 0.f, 16.f });
+	guiWaveLabel_->SetAlignment({ 0.f, 0.f });
+
 	guiGameStartButton_ = sfg::Button::Create("Send creeps");
 	guiGameStartButton_->GetSignal(sfg::Button::OnLeftClick).Connect([this]() {
-		levelInstance_->startWaves();
-		guiGameStartButton_->SetState(sfg::Widget::State::INSENSITIVE);
+		levelInstance_->resume();
+		levelInstance_->getInvasionManager().sendNextWave();
 	});
 
 	guiInfoPanelLocation_ = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
@@ -37,6 +42,7 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 	auto guiMainLayout = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
 	guiMainLayout->PackEnd(guiCashLabel_, false);
 	guiMainLayout->PackEnd(guiLivesLabel_, false);
+	guiMainLayout->PackEnd(guiWaveLabel_, false);
 	createTowerCreationButtons(guiMainLayout);
 	guiMainLayout->PackEnd(guiGameStartButton_, false);
 	guiMainLayout->PackEnd(guiInfoPanelLocation_, false);
@@ -177,6 +183,12 @@ void LevelGameState::update(sf::Time dt)
 	if (oldLives_ != newLives) {
 		oldLives_ = newLives;
 		guiLivesLabel_->SetText("Lives: " + std::to_string(newLives));
+	}
+
+	auto newWave = levelInstance_->getInvasionManager().getWaveNumber();
+	if (oldWave_ != newWave) {
+		oldWave_ = newLives;
+		guiWaveLabel_->SetText("Wave: " + std::to_string(newWave));
 	}
 
 	if (!guiStatusWindow_) {
