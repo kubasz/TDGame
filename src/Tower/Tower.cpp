@@ -3,13 +3,13 @@
 #include "../Bullet/BulletFactory.hpp"
 #include "Tower.hpp"
 
-void Tower::update(BulletFactory & bulletFactory, CreepQueryService & queryService)
+void Tower::update(sf::Time dt, BulletFactory & bulletFactory, CreepQueryService & queryService)
 {
 	targetingComponent_->update(queryService);
 	auto target = targetingComponent_->getTargetedCreep();
 	if (target) {
 		bulletFactory.setTarget(target);
-		shootingComponent_->update(bulletFactory);
+		shootingComponent_->update(dt, bulletFactory);
 	}
 }
 

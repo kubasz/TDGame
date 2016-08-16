@@ -1,5 +1,4 @@
 #include "../MakeUnique.hpp"
-#include "../Constants.hpp"
 #include "../Game.hpp"
 #include "LevelSelectGameState.hpp"
 #include "MenuGameState.hpp"
@@ -29,9 +28,9 @@ MenuGameState::MenuGameState(Game & game)
 	guiDesktop_.Add(guiWindow);
 }
 
-void MenuGameState::update()
+void MenuGameState::update(sf::Time dt)
 {
-	guiDesktop_.Update(Constants::FPS);
+	guiDesktop_.Update(dt.asSeconds());
 }
 
 void MenuGameState::render(sf::RenderTarget & target)

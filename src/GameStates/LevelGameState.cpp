@@ -1,6 +1,5 @@
 #include <fstream>
 #include "../MakeUnique.hpp"
-#include "../Constants.hpp"
 #include "../Level.hpp"
 #include "../Creep/Creep.hpp"
 #include "../Tower/Tower.hpp"
@@ -163,10 +162,10 @@ void LevelGameState::createLostPopup()
 	createEndingPopup("Failure!", "You lost!");
 }
 
-void LevelGameState::update()
+void LevelGameState::update(sf::Time dt)
 {
-	guiDesktop_.Update(Constants::FPS);
-	levelInstance_->update();
+	guiDesktop_.Update(dt.asSeconds());
+	levelInstance_->update(dt);
 
 	auto newCash = levelInstance_->getMoney();
 	if (oldCash_ != newCash) {

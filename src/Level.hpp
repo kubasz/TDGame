@@ -29,7 +29,7 @@ class InvasionManager
 private:
 	struct creationInfo_t
 	{
-		double moment;
+		sf::Time moment;
 		std::string creepName;
 		sf::Vector2i position;
 		int32_t life;
@@ -48,10 +48,10 @@ public:
 	InvasionManager(const nlohmann::json & data);
 
 	//! Spawns creeps for the given moment of time.
-	void spawn(std::shared_ptr<LevelInstance> levelInstance, double moment, double duration);
+	void spawn(std::shared_ptr<LevelInstance> levelInstance, sf::Time moment, sf::Time duration);
 
 	//! Returns if all creeps were already spawned before this moment.
-	bool invasionEnded(double moment) const;
+	bool invasionEnded(sf::Time moment) const;
 
 	//! Returns all points on which Creeps can spawn.
 	const std::vector<sf::Vector2i> & getSpawnPoints() const;
@@ -116,7 +116,7 @@ private:
 	std::vector<std::weak_ptr<Renderable>> renderables_;
 	GridNavigationProvider gridNavigation_;
 	GridTowerPlacementOracle gridTowerPlacement_;
-	double currentTime_;
+	sf::Time currentTime_;
 	bool wavesRunning_;
 	int64_t money_;
 	int64_t lives_;
@@ -181,7 +181,7 @@ public:
 		sf::Vector2i position);
 	void registerBullet(std::shared_ptr<Bullet> bullet);
 
-	void update();
+	void update(sf::Time dt);
 	void render(sf::RenderTarget & target);
 };
 

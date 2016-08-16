@@ -13,7 +13,7 @@ class GameState
 public:
 	virtual ~GameState() {}
 
-	virtual void update() {};
+	virtual void update(sf::Time dt) {};
 	virtual void render(sf::RenderTarget & target) {};
 	virtual void handleEvent(const sf::Event & evt) {};
 };

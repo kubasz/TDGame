@@ -18,7 +18,7 @@ public:
 	MenuGameState(Game & game);
 	virtual ~MenuGameState() {};
 
-	virtual void update() override final;
+	virtual void update(sf::Time dt) override final;
 	virtual void render(sf::RenderTarget & target) override final;
 	virtual void handleEvent(const sf::Event & evt) override final;
 };

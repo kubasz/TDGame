@@ -16,7 +16,7 @@ public:
 	virtual ~CreepWalkComponent() {}
 
 	//! Updates position of the Creep.
-	virtual void update(NavigationProvider<sf::Vector2i> & navigation) = 0;
+	virtual void update(sf::Time dt, NavigationProvider<sf::Vector2i> & navigation) = 0;
 
 	virtual sf::Vector2f getPosition() const = 0;
 	virtual sf::Vector2f getFacingDirection() const = 0;
@@ -42,7 +42,7 @@ private:
 
 public:
 	CreepGridWalkComponent(sf::Vector2i initialPosition);
-	virtual void update(NavigationProvider<sf::Vector2i> & navigation) override;
+	virtual void update(sf::Time dt, NavigationProvider<sf::Vector2i> & navigation) override;
 	virtual sf::Vector2f getPosition() const override;
 	virtual sf::Vector2f getFacingDirection() const override;
 	virtual std::vector<sf::Vector2i> getOccupiedTurretPositions() const override;

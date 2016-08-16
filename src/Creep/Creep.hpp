@@ -27,9 +27,9 @@ public:
 		std::unique_ptr<CreepWalkComponent> walkComponent,
 		std::unique_ptr<CreepDisplayComponent> displayComponent);
 
-	inline void update(NavigationProvider<sf::Vector2i> & navigation)
+	inline void update(sf::Time dt, NavigationProvider<sf::Vector2i> & navigation)
 	{
-		walkComponent_->update(navigation);
+		walkComponent_->update(dt, navigation);
 	}
 
 	inline virtual void render(sf::RenderTarget & target) override

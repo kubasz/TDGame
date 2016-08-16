@@ -45,7 +45,7 @@ public:
 		, displayComponent_(std::move(display))
 	{}
 
-	void update(BulletFactory & bulletFactory, CreepQueryService & queryService);
+	void update(sf::Time dt, BulletFactory & bulletFactory, CreepQueryService & queryService);
 
 	virtual void render(sf::RenderTarget & target) override;
 	sf::Vector2f getPosition() const;

@@ -4,7 +4,6 @@
 #include <set>
 #include <stack>
 #include <json.hpp>
-#include "Constants.hpp"
 #include "Bullet/BulletFactory.hpp"
 #include "Creep/CreepFactory.hpp"
 #include "Creep/CreepQueryService.hpp"
@@ -39,11 +38,11 @@ InvasionManager::InvasionManager(const json & data)
 
 	// We are interested in the "waves" table
 	for (const auto & wave : data["waves"]) {
-		const double startTime = wave["start-time"];
+		const sf::Time startTime = sf::seconds((double)wave["start-time"]);
 
 		// Calculate spawn moments for the given description
 		for (const auto & creepDesc : wave["creeps"]) {
-			std::vector<int64_t> moments;
+			std::vector<sf::Time> moments;
 			const std::string type = creepDesc["type"];
 			const int32_t hp = creepDesc["hp"];
 			const int32_t bounty = creepDesc["bounty"];
@@ -52,7 +51,7 @@ InvasionManager::InvasionManager(const json & data)
 			};
 			knownSpawnPoints.insert(spawnAt);
 
-			auto addInfo = [&](double waveTime) {
+			auto addInfo = [&](sf::Time waveTime) {
 				invasionPlan_.push_back({
 					startTime + waveTime,
 					type, spawnAt, hp, bounty
@@ -62,18 +61,18 @@ InvasionManager::InvasionManager(const json & data)
 			const auto & spawnTime = creepDesc["spawn-time"];
 			if (spawnTime.is_object()) {
 				// We have a range of spawn moments
-				const double start = spawnTime["start"];
-				const double interval = spawnTime["interval"];
+				const auto start = sf::seconds((double)spawnTime["start"]);
+				const auto interval = sf::seconds((double)spawnTime["interval"]);
 				const int64_t count = spawnTime["count"];
 				for (int64_t i = 0; i < count; ++i)
-					addInfo(start + (double)i * interval);
+					addInfo(start + (sf::Int64)i * interval);
 			}
 			else if (spawnTime.is_array()) {
 				for (const auto & time : spawnTime)
-					addInfo((int64_t)time);
+					addInfo(sf::seconds((double)time));
 			}
 			else if (spawnTime.is_number_float()) {
-				addInfo((int64_t)spawnTime);
+				addInfo(sf::seconds((double)spawnTime));
 			}
 			else {
 				throw std::runtime_error("Invalid type of spawnTime");
@@ -86,7 +85,7 @@ InvasionManager::InvasionManager(const json & data)
 		std::back_inserter(spawnPoints_));
 }
 
-void InvasionManager::spawn(std::shared_ptr<LevelInstance> levelInstance, double moment, double duration)
+void InvasionManager::spawn(std::shared_ptr<LevelInstance> levelInstance, sf::Time moment, sf::Time duration)
 {
 	// Damn you, c++
 	creationInfo_t start, end;
@@ -101,7 +100,7 @@ void InvasionManager::spawn(std::shared_ptr<LevelInstance> levelInstance, double
 	}
 }
 
-bool InvasionManager::invasionEnded(double moment) const
+bool InvasionManager::invasionEnded(sf::Time moment) const
 {
 	return invasionPlan_.empty() || (invasionPlan_.back().moment < moment);
 }
@@ -130,7 +129,6 @@ LevelInstance::LevelInstance(std::shared_ptr<Level> level)
 	, towerMap_(new std::shared_ptr<Tower>[level->getWidth() * level->getHeight()])
 	, gridNavigation_(*this, level->getGoal())
 	, gridTowerPlacement_(*this)
-	, currentTime_(0.0)
 	, wavesRunning_(false)
 	, money_(level->getStartingMoney())
 	, lives_(level->getStartingLives())
@@ -196,29 +194,29 @@ static void removeFromVectorIf(std::vector<T> & v, F f)
 	v.resize(std::distance(v.begin(), it));
 }
 
-void LevelInstance::update()
+void LevelInstance::update(sf::Time dt)
 {
 	if (wavesRunning_)
-		level_->getInvasionManager().spawn(shared_from_this(), currentTime_, Constants::FPS);
+		level_->getInvasionManager().spawn(shared_from_this(), currentTime_, dt);
 
 	for (auto & decoration : decorations_)
-		decoration->update();
+		decoration->update(dt);
 
 	CreepVectorQueryService queryService(creeps_);
 
 	for (auto & tower : towers_) {
 		BulletFactory factory(shared_from_this(), tower->getPosition());
-		tower->update(factory, queryService);
+		tower->update(dt, factory, queryService);
 	}
 
 	for (auto & bullet : bullets_)
-		bullet->update();
+		bullet->update(dt);
 	removeFromVectorIf(bullets_, [&](const std::shared_ptr<Bullet> & b) {
 		return !b->isAlive();
 	});
 
 	for (auto & creep : creeps_) {
-		creep->update(gridNavigation_);
+		creep->update(dt, gridNavigation_);
 		if (!creep->isAlive())
 			money_ += creep->getBounty();
 		else if (creep->hasReachedGoal())
@@ -229,7 +227,7 @@ void LevelInstance::update()
 	});
 
 	if (wavesRunning_)
-		currentTime_ += Constants::FPS;
+		currentTime_ += dt;
 	
 	gridTowerPlacement_.updateCreepRestrictions();
 }

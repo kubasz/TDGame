@@ -23,9 +23,9 @@ public:
 		std::unique_ptr<BulletMovementComponent> movementComponent,
 		std::unique_ptr<BulletDisplayComponent> displayComponent);
 
-	inline void update()
+	inline void update(sf::Time dt)
 	{
-		movementComponent_->update();
+		movementComponent_->update(dt);
 	}
 
 	inline virtual void render(sf::RenderTarget & target) override

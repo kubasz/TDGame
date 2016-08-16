@@ -54,7 +54,7 @@ private:
 public:
 	LevelGameState(Game & game, std::istream & source);
 
-	virtual void update() override;
+	virtual void update(sf::Time dt) override;
 	virtual void render(sf::RenderTarget & target) override;
 	virtual void handleEvent(const sf::Event & evt) override;
 };

@@ -3,7 +3,6 @@
 #include <SFML/System.hpp>
 #include "BulletMovementComponent.hpp"
 #include "../Creep/Creep.hpp"
-#include "../Constants.hpp"
 
 BulletTimedMovementComponent::BulletTimedMovementComponent(
 	float time,
@@ -16,13 +15,13 @@ BulletTimedMovementComponent::BulletTimedMovementComponent(
 	, damage_(damage)
 {}
 
-void BulletTimedMovementComponent::update()
+void BulletTimedMovementComponent::update(sf::Time dt)
 {
 	auto lockedTarget = target_.lock();
 	if (!lockedTarget)
 		return;
 
-	const float nextTime = std::max(timeToHit_ - Constants::FPS, 0.f);
+	const float nextTime = std::max(timeToHit_ - dt.asSeconds(), 0.f);
 	const float factor = (nextTime == 0.f) ? 0.f : (nextTime / timeToHit_);
 	const auto creepPosition = lockedTarget->getPosition();
 

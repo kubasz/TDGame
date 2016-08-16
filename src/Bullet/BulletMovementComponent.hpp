@@ -4,6 +4,7 @@
 #define TDF_BULLET_MOVEMENT_COMPONENT_HPP
 
 #include <memory>
+#include <SFML/System.hpp>
 
 class Creep;
 
@@ -14,7 +15,7 @@ public:
 	virtual ~BulletMovementComponent() {}
 
 	//! Updates position of the Bullet.
-	virtual void update() = 0;
+	virtual void update(sf::Time dt) = 0;
 
 	virtual sf::Vector2f getPosition() const = 0;
 	virtual bool isAlive() const = 0;
@@ -35,7 +36,7 @@ public:
 		const std::shared_ptr<Creep> & target,
 		int32_t damage,
 		sf::Vector2f startingPosition);
-	void update() override;
+	void update(sf::Time dt) override;
 	virtual sf::Vector2f getPosition() const override;
 	virtual bool isAlive() const override;
 };

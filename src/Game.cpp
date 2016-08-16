@@ -3,6 +3,7 @@
 #include <SFGUI/Renderers.hpp>
 
 #include "MakeUnique.hpp"
+#include "Constants.hpp"
 #include "Game.hpp"
 #include "GameStates/GameState.hpp"
 #include "GameStates/MenuGameState.hpp"
@@ -60,7 +61,7 @@ int Game::run()
 		}
 		else {
 			if (currentState_)
-				currentState_->update();
+				currentState_->update(sf::seconds(Constants::SECONDS_PER_FRAME));
 			if (currentState_)
 				currentState_->render(window_);
 			sfgui_.Display(window_);

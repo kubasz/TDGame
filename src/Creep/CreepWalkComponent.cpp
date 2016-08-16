@@ -1,4 +1,3 @@
-#include "../Constants.hpp"
 #include "CreepWalkComponent.hpp"
 #include "../Level.hpp"
 
@@ -9,12 +8,12 @@ CreepGridWalkComponent::CreepGridWalkComponent(sf::Vector2i initialPosition)
 	gridPosition_.progress = 1.f;
 }
 
-void CreepGridWalkComponent::update(NavigationProvider<sf::Vector2i> & navigation)
+void CreepGridWalkComponent::update(sf::Time dt, NavigationProvider<sf::Vector2i> & navigation)
 {
 	sf::Vector2i &p0 = gridPosition_.points[0], &p1 = gridPosition_.points[1];
 	float & progress = gridPosition_.progress;
 
-	progress += Constants::FPS;
+	progress += dt.asSeconds();
 	while (progress > 1.f) {
 		p0 = p1;
 		p1 = navigation.getNextStep(p1);

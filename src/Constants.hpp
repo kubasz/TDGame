@@ -5,7 +5,7 @@
 
 namespace Constants
 {
-	static const float FPS = 1.f / 60.f;
+	static const float SECONDS_PER_FRAME = 1.f / 60.f;
 }
 
 #endif // TDF_CONSTANTS_HPP

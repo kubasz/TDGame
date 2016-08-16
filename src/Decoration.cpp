@@ -1,6 +1,5 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include "Constants.hpp"
 #include "Decoration.hpp"
 
 static const float ROTATION_SPEED = 45.f;
@@ -16,9 +15,9 @@ CreepSourceDecoration::CreepSourceDecoration(sf::Vector2f position)
 	rectangleShape_.setFillColor(sf::Color(255, 127, 0));
 }
 
-void CreepSourceDecoration::update()
+void CreepSourceDecoration::update(sf::Time dt)
 {
-	rectangleShape_.rotate(Constants::FPS * ROTATION_SPEED);
+	rectangleShape_.rotate(dt.asSeconds() * ROTATION_SPEED);
 }
 
 void CreepSourceDecoration::render(sf::RenderTarget & target)
@@ -33,9 +32,9 @@ GoalDecoration::GoalDecoration(sf::Vector2f position)
 	circleShape_.setFillColor(sf::Color::Cyan);
 }
 
-void GoalDecoration::update()
+void GoalDecoration::update(sf::Time dt)
 {
-	phase_ += Constants::FPS * PULSE_SPEED;
+	phase_ += dt.asSeconds() * PULSE_SPEED;
 	if (phase_ > M_PI)
 		phase_ -= 2.f * M_PI;
 }

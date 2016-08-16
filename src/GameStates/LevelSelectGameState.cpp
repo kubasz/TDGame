@@ -11,7 +11,6 @@
 #include <vector>
 #include <utility>
 #include "../MakeUnique.hpp"
-#include "../Constants.hpp"
 #include "../Game.hpp"
 #include "LevelGameState.hpp"
 #include "LevelSelectGameState.hpp"
@@ -77,7 +76,7 @@ void LevelSelectGameState::setPath(const std::string & path)
 	guiNextLayout_ = std::move(guiScrolledWindow);
 }
 
-void LevelSelectGameState::update()
+void LevelSelectGameState::update(sf::Time dt)
 {
 	if (guiNextLayout_) {
 		guiMainWindow_->RemoveAll();
@@ -87,7 +86,7 @@ void LevelSelectGameState::update()
 		handleResize(game_.getWidth(), game_.getHeight());
 	}
 
-	guiDesktop_.Update(Constants::FPS);
+	guiDesktop_.Update(dt.asSeconds());
 }
 
 void LevelSelectGameState::render(sf::RenderTarget & target)
