@@ -29,7 +29,8 @@ void CreepLifeDisplayComponent::render(sf::RenderTarget & target)
 
 	const float percentage = (float)life / (float)maxLife;
 
-	shape_.setPosition(owner_->getPosition());
+	shape_.setPosition(owner_->getPosition()
+		+ sf::Vector2f(0.5f * size_.x * percentage, 0.f));
 	shape_.setSize({ size_.x * percentage, size_.y });
 	target.draw(shape_);
 }
