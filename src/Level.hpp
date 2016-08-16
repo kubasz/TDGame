@@ -29,7 +29,7 @@ class InvasionManager
 private:
 	struct creationInfo_t
 	{
-		int64_t moment;
+		double moment;
 		std::string creepName;
 		sf::Vector2i position;
 		int32_t life;
@@ -48,10 +48,10 @@ public:
 	InvasionManager(const nlohmann::json & data);
 
 	//! Spawns creeps for the given moment of time.
-	void spawn(std::shared_ptr<LevelInstance> levelInstance, int64_t moment);
+	void spawn(std::shared_ptr<LevelInstance> levelInstance, double moment, double duration);
 
 	//! Returns if all creeps were already spawned before this moment.
-	bool invasionEnded(int64_t moment) const;
+	bool invasionEnded(double moment) const;
 
 	//! Returns all points on which Creeps can spawn.
 	const std::vector<sf::Vector2i> & getSpawnPoints() const;
@@ -111,7 +111,7 @@ private:
 	std::vector<std::weak_ptr<Renderable>> renderables_;
 	GridNavigationProvider gridNavigation_;
 	GridTowerPlacementOracle gridTowerPlacement_;
-	int64_t currentFrame_;
+	double currentTime_;
 	bool wavesRunning_;
 	int64_t money_;
 
@@ -150,7 +150,7 @@ public:
 
 	bool hasWon() const
 	{
-		return creeps_.empty() && level_->getInvasionManager().invasionEnded(currentFrame_);
+		return creeps_.empty() && level_->getInvasionManager().invasionEnded(currentTime_);
 	}
 
 	//! Returns a control widget for an object selected by mouse position.

@@ -5,7 +5,7 @@
 	"goal": [ 8, 8 ],
 	"waves": [
 		{
-			"start-frame": 180,
+			"start-time": 3.0,
 			"creeps": [
 				{
 					"type": "GenericCreep",
@@ -13,9 +13,9 @@
 					"bounty": 10,
 					"spawn-at": [ 0, 0 ],
 					"spawn-time": {
-						"start": 0,
+						"start": 0.0,
 						"count": 10,
-						"interval": 180
+						"interval": 3.0
 					}
 				},
 				{
@@ -24,9 +24,9 @@
 					"bounty": 10,
 					"spawn-at": [ 15, 15 ],
 					"spawn-time": {
-						"start": 90,
+						"start": 1.5,
 						"count": 10,
-						"interval": 180
+						"interval": 3.0
 					}
 				}
 			]
