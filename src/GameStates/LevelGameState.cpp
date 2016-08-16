@@ -97,7 +97,7 @@ void LevelGameState::handleClick(sf::Vector2i position)
 {
 	if (isPlacingTower_ && levelInstance_->canPlaceTowerHere(hoveredTile_)) {
 		levelInstance_->createTowerAt(placedTowerTypeName_, hoveredTile_);
-		isPlacingTower_ = false;
+		// isPlacingTower_ = false;
 	}
 	else if (!isPlacingTower_) {
 		selectedObject_ = levelInstance_->selectAt(lastMouseLevelPosition_);
