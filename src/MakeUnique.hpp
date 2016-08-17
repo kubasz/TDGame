@@ -5,7 +5,7 @@
 
 #include <memory>
 
-#if defined(__cplusplus) && __cplusplus < 201402L
+#if !defined(_MSC_VER) && (defined(__cplusplus) && __cplusplus < 201402L)
 
 // A Herb Sutter's placeholder implementation of make_unique
 
