@@ -20,3 +20,4 @@ find_package(Thor REQUIRED)
 include_directories(${THOR_INCLUDE_DIR})
 
 add_subdirectory(src)
+add_subdirectory(doc)
