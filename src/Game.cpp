@@ -16,7 +16,7 @@
 #define WAIT_ANY_KEY getchar()
 #endif
 
-Game::Game(int argc, char ** argv)
+Game::Game(int /*argc*/, char ** /*argv*/)
 {
 	srand((unsigned int)time(nullptr));
 	sfg::Renderer::Set(sfg::VertexArrayRenderer::Create());

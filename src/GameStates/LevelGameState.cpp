@@ -104,7 +104,7 @@ void LevelGameState::handleResize(int width, int height)
 	});
 }
 
-void LevelGameState::handleClick(sf::Vector2i position)
+void LevelGameState::handleClick(sf::Vector2i /*position*/)
 {
 	if (isPlacingTower_ && levelInstance_->canPlaceTowerHere(hoveredTile_)) {
 		levelInstance_->createTowerAt(placedTowerTypeName_, hoveredTile_);

@@ -10,7 +10,7 @@ GridNavigationProvider::GridNavigationProvider(
 {
 	const auto & level = levelInstance.getLevel();
 	const int32_t tableSize = level->getWidth() * level->getHeight();
-	path_ = std::move(std::unique_ptr<int32_t[]>(new int32_t[tableSize]));
+	path_ = std::unique_ptr<int32_t[]>(new int32_t[tableSize]);
 
 	// Calculate paths for the first time
 	update();

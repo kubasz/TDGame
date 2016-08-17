@@ -50,8 +50,8 @@ public:
 	virtual void render(sf::RenderTarget & target) override;
 	sf::Vector2f getPosition() const;
 
-	virtual bool isHit(sf::Vector2f point) const;
-	virtual sfg::Widget::Ptr getPanel();
+	virtual bool isHit(sf::Vector2f point) const override;
+	virtual sfg::Widget::Ptr getPanel() override;
 };
 
 #endif // TDF_TOWER_HPP
