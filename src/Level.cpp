@@ -185,6 +185,11 @@ std::shared_ptr<Selectable> LevelInstance::selectAt(sf::Vector2f position)
 			return tower;
 	}
 
+	for (auto & creep : creeps_) {
+		if (creep->isHit(position))
+			return creep;
+	}
+
 	return nullptr;
 }
 

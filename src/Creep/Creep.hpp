@@ -6,6 +6,7 @@
 #include <memory>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
+#include "../Selectable.hpp"
 #include "../Renderable.hpp"
 #include "CreepDisplayComponent.hpp"
 #include "CreepWalkComponent.hpp"
@@ -14,7 +15,7 @@
 //! A Creep is composed of two components: walking and display.
 //! Besides forwarding some methods to the components, it also keeps
 //! track of the Creep's life.
-class Creep : public Renderable
+class Creep : public Selectable, public Renderable
 {
 private:
 	std::unique_ptr<CreepWalkComponent> walkComponent_;
@@ -76,6 +77,9 @@ public:
 	{
 		return walkComponent_->getOccupiedTurretPositions();
 	}
+
+	virtual bool isHit(sf::Vector2f point) const override;
+	virtual sfg::Widget::Ptr getPanel() override;
 };
 
 #endif // TDF_CREEP_HPP

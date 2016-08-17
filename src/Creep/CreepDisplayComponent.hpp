@@ -18,11 +18,13 @@ class CreepDotDisplayComponent final : public CreepDisplayComponent
 {
 private:
 	sf::CircleShape circle_;
+	float radius_;
 	const CreepWalkComponent & walkComponent_;
 
 public:
 	CreepDotDisplayComponent(const CreepWalkComponent & walkComponent, float radius);
 	virtual void render(sf::RenderTarget & target) override;
+	virtual bool isHit(sf::Vector2f point) const override;
 };
 
 #endif // TDF_CREEP_DISPLAY_COMPONENT_HPP

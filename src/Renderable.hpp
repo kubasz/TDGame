@@ -7,12 +7,16 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 
-//! A base class for a component which can be rendered.
+//! A base class for a component which can be rendered, and hit-tested.
 class Renderable
 {
 public:
 	virtual ~Renderable() {}
 	virtual void render(sf::RenderTarget & target) = 0;
+	virtual bool isHit(sf::Vector2f /*point*/) const
+	{
+		return false;
+	}
 };
 
 //! A Renderable which is composed of other renderables.
@@ -35,6 +39,16 @@ public:
 	{
 		for (auto & child : children_)
 			child->render(target);
+	}
+
+	virtual bool isHit(sf::Vector2f point) const override
+	{
+		for (const auto & child : children_) {
+			if (child->isHit(point))
+				return true;
+		}
+
+		return false;
 	}
 };
 
