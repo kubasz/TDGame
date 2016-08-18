@@ -60,5 +60,5 @@ set(LIBS
 	${THOR_LIBRARY}
 )
 
-add_executable(TDGame ${SOURCES})
+add_executable(TDGame ${SOURCES} ${HEADERS})
 target_link_libraries(TDGame ${LIBS})
