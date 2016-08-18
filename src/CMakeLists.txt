@@ -23,6 +23,37 @@ set(SOURCES
 	Tower/TowerTargetingComponent.cpp
 )
 
+set(HEADERS
+	Bullet/Bullet.hpp
+	Bullet/BulletDisplayComponent.hpp
+	Bullet/BulletFactory.hpp
+	Bullet/BulletMovementComponent.hpp
+	Constants.hpp
+	Creep/Creep.hpp
+	Creep/CreepDisplayComponent.hpp
+	Creep/CreepFactory.hpp
+	Creep/CreepLifeDisplayComponent.hpp
+	Creep/CreepQueryService.hpp
+	Creep/CreepWalkComponent.hpp
+	Decoration.hpp
+	Game.hpp
+	GameStates/GameState.hpp
+	GameStates/LevelGameState.hpp
+	GameStates/LevelSelectGameState.hpp
+	GameStates/MenuGameState.hpp
+	Level.hpp
+	LevelServices.hpp
+	MakeUnique.hpp
+	Renderable.hpp
+	ScopeGuard.hpp
+	Selectable.hpp
+	Tower/Tower.hpp
+	Tower/TowerDisplayComponent.hpp
+	Tower/TowerFactory.hpp
+	Tower/TowerShootingComponent.hpp
+	Tower/TowerTargetingComponent.hpp
+)
+
 set(LIBS
 	${SFML_LIBRARIES}
 	${SFGUI_LIBRARY}
