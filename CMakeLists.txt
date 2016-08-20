@@ -19,5 +19,8 @@ include_directories(${SFGUI_INCLUDE_DIR})
 find_package(Thor REQUIRED)
 include_directories(${THOR_INCLUDE_DIR})
 
+# Build targets should be placed in the root build directory
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
 add_subdirectory(src)
 add_subdirectory(doc)
