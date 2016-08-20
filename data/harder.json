@@ -1,7 +1,7 @@
 {
 	"name": "Harder level",
 	"starting-lives": 10,
-	"starting-money": 100,
+	"starting-money": 150,
 	"grid-size": [ 16, 16 ],
 	"goal": [ 8, 8 ],
 	"waves": [
@@ -13,6 +13,17 @@
 					"hp": 100,
 					"bounty": 25,
 					"spawn-at": [ 0, 0 ],
+					"spawn-time": {
+						"start": 0.0,
+						"count": 50,
+						"interval": 1.0
+					}
+				},
+				{
+					"type": "GenericCreep",
+					"hp": 100,
+					"bounty": 25,
+					"spawn-at": [ 15, 15 ],
 					"spawn-time": {
 						"start": 0.0,
 						"count": 50,

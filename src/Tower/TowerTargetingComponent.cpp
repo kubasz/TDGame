@@ -2,13 +2,14 @@
 #include "../Creep/CreepQueryService.hpp"
 #include "TowerTargetingComponent.hpp"
 
-TowerClosestTargetingComponent::TowerClosestTargetingComponent(sf::Vector2f position)
+TowerClosestTargetingComponent::TowerClosestTargetingComponent(sf::Vector2f position, float range)
 	: position_(position)
+	, range_(range)
 {}
 
 std::shared_ptr<Creep> TowerClosestTargetingComponent::chooseCreep(CreepQueryService & service)
 {
-	return service.getClosestCreep(position_);
+	return service.getClosestCreep(position_, range_);
 }
 
 std::shared_ptr<Creep> TowerTargetingLockOnComponent::chooseCreep(CreepQueryService & service)

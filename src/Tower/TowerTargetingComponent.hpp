@@ -36,12 +36,13 @@ class TowerClosestTargetingComponent final : public TowerTargetingComponent
 {
 private:
 	sf::Vector2f position_;
+	float range_;
 
 protected:
 	virtual std::shared_ptr<Creep> chooseCreep(CreepQueryService & service) override;
 
 public:
-	TowerClosestTargetingComponent(sf::Vector2f position);
+	TowerClosestTargetingComponent(sf::Vector2f position, float range = std::numeric_limits<float>::infinity());
 };
 
 //! A helper targeting component which uses another component to choose a targeted

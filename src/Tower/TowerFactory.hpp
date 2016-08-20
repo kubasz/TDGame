@@ -13,7 +13,6 @@ class Tower;
 struct towerTypeInfo_t
 {
 	int32_t cost;
-	float range;
 	std::function<std::shared_ptr<Tower>(sf::Vector2f position)> construct;
 };
 
