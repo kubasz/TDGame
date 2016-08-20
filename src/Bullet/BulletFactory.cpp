@@ -15,6 +15,13 @@ std::shared_ptr<Bullet> BulletFactory::innerCreateBullet(
 		return std::make_shared<Bullet>(std::move(movement), std::move(display));
 	}
 
+	if (bulletName == "LaserBullet") {
+		auto movement = std::make_unique<BulletLaserMovementComponent>(
+				0.1f, target_, 10, position_);
+		auto display = std::make_unique<BulletLaserDisplayComponent>(*movement.get());
+		return std::make_shared<Bullet>(std::move(movement), std::move(display));
+	}
+
 	throw std::runtime_error("Unknown Bullet type: " + bulletName);
 }
 

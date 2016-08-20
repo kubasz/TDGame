@@ -94,7 +94,7 @@ int main(int argc, char ** argv)
 	}
 	catch (std::runtime_error & err) {
 		std::cout << "Runtime error: " << err.what() << std::endl;
-		WAIT_ANY_KEY;
+		//WAIT_ANY_KEY;
 		return 1;
 	}
 }
