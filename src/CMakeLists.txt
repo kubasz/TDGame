@@ -30,6 +30,7 @@ set(HEADERS
 	Bullet/BulletMovementComponent.hpp
 	Constants.hpp
 	Creep/Creep.hpp
+	Creep/Buff.hpp
 	Creep/CreepDisplayComponent.hpp
 	Creep/CreepFactory.hpp
 	Creep/CreepLifeDisplayComponent.hpp

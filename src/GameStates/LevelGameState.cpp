@@ -210,7 +210,7 @@ void LevelGameState::handleCommand(sf::String scmd)
 		}
 		if(cmd == "help")
 		{
-			conguiOutput_->SetText("Cmds: help, money %");
+			conguiOutput_->SetText("Cmds: help, money %, creepspeed %");
 		}
 		else if(cmd == "money")
 		{
@@ -221,6 +221,24 @@ void LevelGameState::handleCommand(sf::String scmd)
 			}
 			int amount = std::strtol(tokens[1].c_str(), nullptr, 10);
 			this->levelInstance_->cheatAddMoney(amount);
+		}
+		else if(cmd=="creepspeed")
+		{
+			if(tokens.size()!=2)
+			{
+				conguiOutput_->SetText("Usage: creepspeed [-]buffamount");
+				return;
+			}
+			float amount = std::strtof(tokens[1].c_str(), nullptr);
+			auto& cr = this->levelInstance_->getCreeps();
+			for(auto& creep : cr)
+			{
+				CreepBuff buff = {};
+				buff.type = CreepBuff::Type::BUFF_SPEED;
+				buff.duration = 5.0;
+				buff.strength = amount;
+				creep->applyBuff(buff);
+			}
 		}
 	}
 }

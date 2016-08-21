@@ -8,12 +8,16 @@ CreepGridWalkComponent::CreepGridWalkComponent(sf::Vector2i initialPosition)
 	gridPosition_.progress = 1.f;
 }
 
-void CreepGridWalkComponent::update(sf::Time dt, NavigationProvider<sf::Vector2i> & navigation)
+void CreepGridWalkComponent::update(sf::Time dt, NavigationProvider<sf::Vector2i> & navigation, float speedBuff)
 {
+	if(speedBuff < -59.f)
+	{
+		speedBuff = -59.f;
+	}
 	sf::Vector2i &p0 = gridPosition_.points[0], &p1 = gridPosition_.points[1];
 	float & progress = gridPosition_.progress;
 
-	progress += dt.asSeconds();
+	progress += dt.asSeconds() + speedBuff*dt.asSeconds()/60.0f;
 	while (progress > 1.f) {
 		p0 = p1;
 		p1 = navigation.getNextStep(p1);
