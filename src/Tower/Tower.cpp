@@ -1,6 +1,7 @@
 #include <SFGUI/Widgets.hpp>
 #include "../Bullet/Bullet.hpp"
 #include "../Bullet/BulletFactory.hpp"
+#include "../Level.hpp"
 #include "Tower.hpp"
 
 void Tower::update(sf::Time dt, BulletFactory & bulletFactory, CreepQueryService & queryService)
@@ -32,7 +33,17 @@ bool Tower::isHit(sf::Vector2f point) const
 	return rect.contains(point);
 }
 
-sfg::Widget::Ptr Tower::getPanel()
+sfg::Widget::Ptr Tower::getPanel(std::shared_ptr<LevelInstance> levelInstance)
 {
-	return sfg::Label::Create("Tower #" + std::to_string((intptr_t)this));
+	auto label = sfg::Label::Create("Tower #" + std::to_string((intptr_t)this));
+
+	auto sellButton = sfg::Button::Create("Sell");
+	sellButton->GetSignal(sfg::Button::OnLeftClick).Connect([this, levelInstance]() {
+		levelInstance->sellTower(this);
+	});
+
+	auto layout = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+	layout->PackEnd(label, false);
+	layout->PackEnd(sellButton, false);
+	return layout;
 }

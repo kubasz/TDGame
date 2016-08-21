@@ -34,7 +34,7 @@ sf::Vector2i GridNavigationProvider::getNextStep(const sf::Vector2i & point) con
 
 void GridNavigationProvider::update()
 {
-	// A simple BFS algorithm with articulation point finding.
+	// A simple BFS algorithm creating BFS-tree.
 	// For small maps it should suffice.
 	static const int32_t EMPTY = -1, FILLED = -2;
 	const int32_t width = levelInstance_.getLevel()->getWidth();
@@ -97,11 +97,12 @@ GridTowerPlacementOracle::GridTowerPlacementOracle(LevelInstance & levelInstance
 	parents_.reset(new int32_t[tableSize]);
 	pre_.reset(new int32_t[tableSize]);
 	low_.reset(new int32_t[tableSize]);
+	dp_.reset(new int32_t[tableSize]);
 
 	const int32_t width = levelInstance_.getLevel()->getWidth();
 	std::fill(permanentlyOccupied_.get(), permanentlyOccupied_.get() + tableSize, false);
 
-	// Forbid placing on goals, as it may be a non-articulation point
+	// Forbid placing on goals, as it may be a non-cut point
 	const auto goal = levelInstance_.getLevel()->getGoal();
 	const auto goalIndex = goal.y * width + goal.x;
 	permanentlyOccupied_[goalIndex] = true;
@@ -148,12 +149,12 @@ void GridTowerPlacementOracle::render(sf::RenderTarget & target)
 
 void GridTowerPlacementOracle::updateTowerRestrictions()
 {
-	// The algorithm marks articulation points, creep sources and the goal
+	// The algorithm marks cut points, creep sources and the goal
 	// as unsuitable to place a tower on. Every other point is marked as
 	// suitable. It uses program-stack based dfs, so on big maps there
 	// might be a stack overflow.
 	// TODO: This algorithm marks invalid points too eagerly, as some
-	// articulation points are still valid turret placement points
+	// cut points are still valid turret placement points
 	// (e.g. dead-end corridors leading neither to a source nor the goal).
 	static const int32_t EMPTY = -1;
 	static const int32_t ROOT = -2;
@@ -171,12 +172,14 @@ void GridTowerPlacementOracle::updateTowerRestrictions()
 		int32_t minimum = preCounter++;
 		pre_[current] = minimum;
 		parents_[current] = parent;
+		dp_[current] = permanentlyOccupied_[current];
 
 		auto processChild = [&](int32_t child, int32_t nx, int32_t ny) {
 			if (child != parent && !levelInstance_.getTowerAt(nx, ny)) {
 				int32_t v;
 				if (parents_[child] == EMPTY) {
 					dfs(child, nx, ny, current);
+					dp_[current] += dp_[child];
 					v = low_[child];
 				}
 				else
@@ -202,7 +205,7 @@ void GridTowerPlacementOracle::updateTowerRestrictions()
 	const auto goalIndex = goal.y * width + goal.x;
 	dfs(goalIndex, goal.x, goal.y, ROOT);
 
-	// Now see which vertices are articulation points.
+	// Now see which vertices are cut points.
 	// Note we don't process root differently, as it never is a valid place
 	// for a turret
 	for (int y = 0; y < height; y++) {
@@ -218,7 +221,8 @@ void GridTowerPlacementOracle::updateTowerRestrictions()
 				if (parents_[child] == current) {
 					const auto low = low_[child];
 					const auto pre = pre_[current];
-					if (low >= pre)
+					const auto dp = dp_[child];
+					if ((low >= pre) && (dp > 0)) 
 						validTurretPlaces_[current] = false;
 				}
 			};

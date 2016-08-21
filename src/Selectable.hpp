@@ -6,6 +6,8 @@
 #include <SFML/System.hpp>
 #include <SFGUI/Widget.hpp>
 
+class LevelInstance;
+
 //! \class Selectable
 //! \brief A selectable entity interface.
 //! Subclassed and registered entities can be selected by clicking on
@@ -21,7 +23,7 @@ public:
 	virtual bool isHit(sf::Vector2f point) const = 0;
 
 	//! \brief Returns a panel with settings for the given object.
-	virtual sfg::Widget::Ptr getPanel() = 0;
+	virtual sfg::Widget::Ptr getPanel(std::shared_ptr<LevelInstance> levelInstance) = 0;
 };
 
 #endif // TDF_SELECTABLE_HPP

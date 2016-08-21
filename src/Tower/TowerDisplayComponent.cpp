@@ -6,6 +6,24 @@
 #include "TowerTargetingComponent.hpp"
 
 TowerSimpleDisplayComponent::TowerSimpleDisplayComponent(
+		sf::Vector2f position,
+		const sf::Texture & texture)
+		: position_(position)
+{
+	position_.x -= 0.5;
+	position_.y -= 0.5;
+
+	sprite_.setTexture(texture);
+	sprite_.setPosition(position_);
+	sprite_.setScale(1.f/32.f, 1.f/32.f);
+}
+
+void TowerSimpleDisplayComponent::render(sf::RenderTarget & target)
+{
+	target.draw(sprite_);
+}
+
+TowerTargettingDisplayComponent::TowerTargettingDisplayComponent(
 	TowerTargetingComponent & targeting,
 	sf::Vector2f position,
 	const sf::Texture & texture)
@@ -25,7 +43,7 @@ TowerSimpleDisplayComponent::TowerSimpleDisplayComponent(
 	barrelShape_.setFillColor(sf::Color::Black);
 }
 
-void TowerSimpleDisplayComponent::render(sf::RenderTarget & target)
+void TowerTargettingDisplayComponent::render(sf::RenderTarget & target)
 {
 	auto targeted = targetingComponent_.getTargetedCreep();
 	if (targeted) {

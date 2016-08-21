@@ -19,15 +19,28 @@ class TowerSimpleDisplayComponent final : public TowerDisplayComponent
 {
 private:
 	sf::Sprite sprite_;
+	sf::Vector2f position_;
+
+public:
+	TowerSimpleDisplayComponent(
+		sf::Vector2f position, const sf::Texture& texture);
+	virtual void render(sf::RenderTarget & target) override;
+};
+
+//! A simple look for the tower with targetting gun
+class TowerTargettingDisplayComponent final : public TowerDisplayComponent
+{
+private:
+	sf::Sprite sprite_;
 	sf::RectangleShape barrelShape_;
 	TowerTargetingComponent & targetingComponent_;
 	float angle_;
 	sf::Vector2f position_;
 
 public:
-	TowerSimpleDisplayComponent(
-		TowerTargetingComponent & targeting,
-		sf::Vector2f position, const sf::Texture& texture);
+	TowerTargettingDisplayComponent(
+			TowerTargetingComponent & targeting,
+			sf::Vector2f position, const sf::Texture& texture);
 	virtual void render(sf::RenderTarget & target) override;
 };
 

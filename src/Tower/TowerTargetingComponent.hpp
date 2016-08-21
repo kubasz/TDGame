@@ -17,7 +17,10 @@ private:
 	std::shared_ptr<Creep> targetedCreep_;
 
 protected:
-	virtual std::shared_ptr<Creep> chooseCreep(CreepQueryService & service) = 0;
+	virtual std::shared_ptr<Creep> chooseCreep(CreepQueryService & /*service*/)
+	{
+		return nullptr;
+	}
 
 public:
 	virtual ~TowerTargetingComponent() {}

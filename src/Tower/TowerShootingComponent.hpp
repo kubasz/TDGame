@@ -12,7 +12,7 @@ class TowerShootingComponent
 {
 public:
 	virtual ~TowerShootingComponent() {}
-	virtual void update(sf::Time dt, BulletFactory & bulletFactory) = 0;
+	virtual void update(sf::Time /*dt*/, BulletFactory & /*bulletFactory*/) {};
 };
 
 //! Shoots a bullet every n seconds.
