@@ -3,6 +3,8 @@
 #ifndef TDF_CREEP_DISPLAY_COMPONENT_HPP
 #define TDF_CREEP_DISPLAY_COMPONENT_HPP
 
+#include <SFML/Graphics.hpp>
+
 #include "../Renderable.hpp"
 
 class CreepWalkComponent;
@@ -17,12 +19,12 @@ class CreepCompositeDisplayComponent final
 class CreepDotDisplayComponent final : public CreepDisplayComponent
 {
 private:
-	sf::CircleShape circle_;
+	sf::Sprite sprite_;
 	float radius_;
 	const CreepWalkComponent & walkComponent_;
 
 public:
-	CreepDotDisplayComponent(const CreepWalkComponent & walkComponent, float radius);
+	CreepDotDisplayComponent(const CreepWalkComponent & walkComponent, float radius, const sf::Texture &texture);
 	virtual void render(sf::RenderTarget & target) override;
 	virtual bool isHit(sf::Vector2f point) const override;
 };

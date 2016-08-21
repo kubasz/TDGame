@@ -146,7 +146,7 @@ int32_t InvasionManager::getWaveNumber() const
 	return currentWave_;
 }
 
-Level::Level(std::istream & source)
+Level::Level(std::istream & source, Game &game) : game_(game)
 {
 	json levelDescription;
 	source >> levelDescription;
@@ -160,7 +160,7 @@ Level::Level(std::istream & source)
 	invasionManager_.reset(new InvasionManager(levelDescription));
 }
 
-LevelInstance::LevelInstance(std::shared_ptr<Level> level)
+LevelInstance::LevelInstance(std::shared_ptr<Level> level, Game & game)
 	: level_(level)
 	, towerMap_(new std::shared_ptr<Tower>[level->getWidth() * level->getHeight()])
 	, invasionManager_(level_->cloneInvasionManager())
@@ -169,6 +169,7 @@ LevelInstance::LevelInstance(std::shared_ptr<Level> level)
 	, wavesRunning_(false)
 	, money_(level->getStartingMoney())
 	, lives_(level->getStartingLives())
+	, game_(game)
 {
 	for (auto source : invasionManager_.getSpawnPoints())
 		decorations_.push_back(std::make_shared<CreepSourceDecoration>(sf::Vector2f(source)));
@@ -201,8 +202,8 @@ bool LevelInstance::createTowerAt(const std::string & name, sf::Vector2i positio
 	const auto typeInfo = TowerFactory::getTowerTypeInfo(name);
 	if (typeInfo.cost > money_)
 		return false;
-
-	auto tower = typeInfo.construct({ (float)position.x, (float)position.y });
+	
+	auto tower = typeInfo.construct({ (float)position.x, (float)position.y }, game_);
 
 	towers_.push_back(tower);
 	renderables_.push_back(tower);
@@ -217,7 +218,7 @@ bool LevelInstance::createTowerAt(const std::string & name, sf::Vector2i positio
 
 void LevelInstance::createCreepAt(const std::string & name, int32_t life, int32_t bounty, sf::Vector2i position)
 {
-	auto creep = CreepFactory().createCreep(name, life, bounty, position);
+	auto creep = CreepFactory().createCreep(name, life, bounty, position, game_);
 	creeps_.push_back(creep);
 	renderables_.push_back(creep);
 }

@@ -4,9 +4,12 @@
 #define TDF_TOWER_DISPLAY_COMPONENT_HPP
 
 #include <SFML/System.hpp>
+
 #include "../Renderable.hpp"
+#include "../Game.hpp"
 
 class TowerTargetingComponent;
+class Game;
 
 //! A Tower component implementing the look of the tower.
 class TowerDisplayComponent : public Renderable {};
@@ -15,7 +18,7 @@ class TowerDisplayComponent : public Renderable {};
 class TowerSimpleDisplayComponent final : public TowerDisplayComponent
 {
 private:
-	sf::CircleShape baseShape_;
+	sf::Sprite sprite_;
 	sf::RectangleShape barrelShape_;
 	TowerTargetingComponent & targetingComponent_;
 	float angle_;
@@ -24,7 +27,7 @@ private:
 public:
 	TowerSimpleDisplayComponent(
 		TowerTargetingComponent & targeting,
-		sf::Vector2f position);
+		sf::Vector2f position, const sf::Texture& texture);
 	virtual void render(sf::RenderTarget & target) override;
 };
 

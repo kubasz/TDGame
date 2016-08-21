@@ -7,15 +7,19 @@
 
 TowerSimpleDisplayComponent::TowerSimpleDisplayComponent(
 	TowerTargetingComponent & targeting,
-	sf::Vector2f position)
+	sf::Vector2f position,
+	const sf::Texture & texture)
 	: targetingComponent_(targeting)
 	, angle_(0.f)
 	, position_(position)
 {
-	baseShape_.setRadius(0.25f);
-	baseShape_.setFillColor(sf::Color::Black);
-	baseShape_.setPosition(position);
-	baseShape_.setOrigin(0.25f, 0.25f);
+	position_.x -= 0.5;
+	position_.y -= 0.5;
+
+	sprite_.setTexture(texture);
+	sprite_.setPosition(position_);
+	sprite_.setScale(1.f/32.f, 1.f/32.f);
+
 	barrelShape_.setPosition(0.f, -0.125f);
 	barrelShape_.setSize({ 0.5f, 0.25f });
 	barrelShape_.setFillColor(sf::Color::Black);
@@ -32,6 +36,6 @@ void TowerSimpleDisplayComponent::render(sf::RenderTarget & target)
 	sf::Transform transform;
 	transform.translate(position_).rotate(angle_);
 
-	target.draw(baseShape_);
+	target.draw(sprite_);
 	target.draw(barrelShape_, transform);
 }

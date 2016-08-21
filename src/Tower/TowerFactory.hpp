@@ -9,12 +9,13 @@
 #include <SFML/System.hpp>
 
 class Tower;
+class Game;
 
 struct towerTypeInfo_t
 {
 	int32_t cost;
 	float range;
-	std::function<std::shared_ptr<Tower>(sf::Vector2f position)> construct;
+	std::function<std::shared_ptr<Tower>(sf::Vector2f position, Game &game__)> construct;
 };
 
 //! Its sole purpose is to create Turrets.

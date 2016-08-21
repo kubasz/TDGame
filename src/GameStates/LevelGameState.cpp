@@ -12,8 +12,8 @@ static const int RIGHT_PANEL_WIDTH = 200;
 
 LevelGameState::LevelGameState(Game & game, std::istream & source)
 	: game_(game)
-	, level_(std::make_shared<Level>(source))
-	, levelInstance_(new LevelInstance(level_))
+	, level_(std::make_shared<Level>(source, game))
+	, levelInstance_(new LevelInstance(level_, game))
 	, oldCash_(-1)
 	, oldLives_(-1)
 	, oldWave_(-2)
@@ -231,6 +231,23 @@ void LevelGameState::render(sf::RenderTarget & target)
 		rs.setPosition((float)hoveredTile_.x - 0.5f, (float)hoveredTile_.y - 0.5f);
 		target.draw(rs);
 	}
+	/*if(isPlacingTower_) {
+		sf::Sprite sprite;
+		if(levelInstance_->canPlaceTowerHere(hoveredTile_)) {
+			sprite.setTexture(game_.getTexture("Tower"));
+			sprite.setScale(1.f/32.f, 1.f/32.f);
+			sprite.setPosition((float)hoveredTile_.x - 0.5f, (float)hoveredTile_.y - 0.5f);
+			target.draw(sprite);
+		}
+
+		else {
+			sf::RectangleShape rs;
+			rs.setFillColor(sf::Color(255, 0, 0, 127));
+			rs.setSize({1.f, 1.f});
+			rs.setPosition((float)hoveredTile_.x - 0.5f, (float)hoveredTile_.y - 0.5f);
+			target.draw(rs);
+		}
+	}*/
 
 	target.popGLStates();
 	target.setView(oldView);

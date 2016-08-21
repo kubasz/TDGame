@@ -6,10 +6,15 @@
 #include <memory>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+
+#include "../Game.hpp"
 #include "../Selectable.hpp"
 #include "../Renderable.hpp"
 #include "CreepDisplayComponent.hpp"
 #include "CreepWalkComponent.hpp"
+
+class Game;
 
 //! \brief Represents an enemy in the level.
 //! A Creep is composed of two components: walking and display.
@@ -22,11 +27,12 @@ private:
 	std::unique_ptr<CreepDisplayComponent> displayComponent_;
 	int32_t life_, maxLife_;
 	int32_t bounty_;
+	sf::Sound sound_;
 
 public:
 	Creep(int32_t maxLife, int32_t bounty,
 		std::unique_ptr<CreepWalkComponent> walkComponent,
-		std::unique_ptr<CreepDisplayComponent> displayComponent);
+		std::unique_ptr<CreepDisplayComponent> displayComponent, Game &game);
 
 	inline void update(sf::Time dt, NavigationProvider<sf::Vector2i> & navigation)
 	{
@@ -63,11 +69,6 @@ public:
 		return walkComponent_->hasReachedGoal();
 	}
 
-	inline void inflictDamage(int32_t damage)
-	{
-		life_ -= damage;
-	}
-
 	inline int32_t getBounty() const
 	{
 		return bounty_;
@@ -77,6 +78,8 @@ public:
 	{
 		return walkComponent_->getOccupiedTurretPositions();
 	}
+
+	void inflictDamage(int32_t damage);
 
 	virtual bool isHit(sf::Vector2f point) const override;
 	virtual sfg::Widget::Ptr getPanel() override;

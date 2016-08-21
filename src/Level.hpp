@@ -22,6 +22,7 @@
 
 class Level;
 class LevelInstance;
+class Game;
 
 //! A factory creating Creeps and adding them to the world at appropriate times.
 class InvasionManager
@@ -81,9 +82,10 @@ private:
 	sf::Vector2i goal_;
 	int64_t startingMoney_;
 	int64_t startingLives_;
+	Game& game_;
 
 public:
-	Level(std::istream & source);
+	Level(std::istream & source, Game &game);
 	int32_t getWidth() const
 	{
 		return width_;
@@ -136,9 +138,10 @@ private:
 	bool wavesRunning_;
 	int64_t money_;
 	int64_t lives_;
+	Game& game_;
 
 public:
-	LevelInstance(std::shared_ptr<Level> level);
+	LevelInstance(std::shared_ptr<Level> level, Game &game);
 	NavigationProvider<sf::Vector2i> & getGoalNavigationProvider();
 	std::shared_ptr<Level> getLevel() const
 	{

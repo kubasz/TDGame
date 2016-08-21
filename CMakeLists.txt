@@ -10,7 +10,7 @@ if ("${CMAKE_SYSTEM_NAME}" MATCHES "Windows")
 	include_directories("${CMAKE_SOURCE_DIR}/ext/win-include")
 endif()
 include_directories("${CMAKE_SOURCE_DIR}/ext/include")
-find_package(SFML 2.3 REQUIRED COMPONENTS graphics window system)
+find_package(SFML 2.3 REQUIRED COMPONENTS graphics window system audio)
 include_directories(${SFML_INCLUDE_DIR})
 
 find_package(SFGUI 0.3 REQUIRED)
@@ -18,6 +18,9 @@ include_directories(${SFGUI_INCLUDE_DIR})
 
 find_package(Thor REQUIRED)
 include_directories(${THOR_INCLUDE_DIR})
+
+# Build targets should be placed in the root build directory
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 add_subdirectory(src)
 add_subdirectory(doc)

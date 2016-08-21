@@ -3,19 +3,23 @@
 
 CreepDotDisplayComponent::CreepDotDisplayComponent(
 	const CreepWalkComponent & walkComponent,
-	float radius)
-	: circle_(radius)
-	, radius_(radius)
+	float radius, const sf::Texture& texture)
+	: radius_(radius)
 	, walkComponent_(walkComponent)
 {
-	circle_.setFillColor(sf::Color::Black);
-	circle_.setOrigin(radius, radius);
+	sprite_.setTexture(texture);
+	sprite_.setOrigin(radius, radius);
+	sprite_.setScale(1.f/32.f, 1.f/32.f);
 }
 
 void CreepDotDisplayComponent::render(sf::RenderTarget & target)
 {
-	circle_.setPosition(walkComponent_.getPosition());
-	target.draw(circle_);
+	sf::Vector2f pos = walkComponent_.getPosition();
+	pos.x -= 0.5f;
+	pos.y -= 0.5f;
+
+	sprite_.setPosition(pos);
+	target.draw(sprite_);
 }
 
 bool CreepDotDisplayComponent::isHit(sf::Vector2f point) const

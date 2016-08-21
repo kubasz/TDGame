@@ -30,11 +30,35 @@ Game::Game(int /*argc*/, char ** /*argv*/)
 	window_.setFramerateLimit(60);
 	window_.setActive();
 
+	loadResources();
+
 	setNextState(std::make_unique<MenuGameState>(*this));
 }
 
 Game::~Game()
 {}
+
+void Game::loadResources()
+{
+	loadTextures();
+	loadSounds();
+}
+
+void Game::loadTextures()
+{
+	//loading textures into resources holder
+	textures_holder_.acquire("Tower", 
+		thor::Resources::fromFile <sf::Texture>("data/Images/image.png"));
+	textures_holder_.acquire("Creep", 
+		thor::Resources::fromFile <sf::Texture>("data/Images/creep.png"));
+}
+
+void Game::loadSounds()
+{
+	//loading textures into resources holder
+	sounds_holder_.acquire("Creep", 
+		thor::Resources::fromFile <sf::SoundBuffer>("data/Audio/creep.ogg"));
+}
 
 void Game::setNextState(std::unique_ptr<GameState> gameState)
 {
@@ -87,11 +111,22 @@ int Game::getHeight() const
 	return window_.getSize().y;
 }
 
+const sf::Texture& Game::getTexture(const std::string &id) const
+{
+	return textures_holder_[id];
+}
+
+const sf::SoundBuffer& Game::getSound(const std::string &id) const
+{
+	return sounds_holder_[id];
+}
+
 int main(int argc, char ** argv)
 {
 	try {
 		return Game(argc, argv).run();
 	}
+	
 	catch (std::runtime_error & err) {
 		std::cout << "Runtime error: " << err.what() << std::endl;
 		WAIT_ANY_KEY;

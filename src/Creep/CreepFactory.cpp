@@ -8,11 +8,12 @@
 std::shared_ptr<Creep> CreepFactory::createCreep(
 	const std::string & typeName,
 	int32_t life, int32_t bounty,
-	sf::Vector2i position)
+	sf::Vector2i position, Game &game)
 {
 	if (typeName == "GenericCreep") {
 		auto walk = std::make_unique<CreepGridWalkComponent>(position);
-		auto dotDisplay = std::make_unique<CreepDotDisplayComponent>(*walk.get(), 0.125f);
+		auto dotDisplay = std::make_unique<CreepDotDisplayComponent>(*walk.get(), 0.125f,
+			game.getTexture("Creep"));
 
 		auto lifeDisplay = std::make_unique<CreepLifeDisplayComponent>(
 			sf::Vector2f(0.f, 0.5f), sf::Vector2f(0.8f, 0.2f), true);
@@ -22,7 +23,8 @@ std::shared_ptr<Creep> CreepFactory::createCreep(
 		compositeDisplay->addChild(std::move(dotDisplay));
 		compositeDisplay->addChild(std::move(lifeDisplay));
 
-		auto ret = std::make_shared<Creep>(life, bounty, std::move(walk), std::move(compositeDisplay));
+		auto ret = std::make_shared<Creep>(life, bounty,
+			std::move(walk),std::move(compositeDisplay), game);
 		lifeDisplayDirect->setOwner(ret.get());
 		return ret;
 	}
