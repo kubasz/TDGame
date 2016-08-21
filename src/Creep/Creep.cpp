@@ -19,7 +19,7 @@ bool Creep::isHit(sf::Vector2f point) const
 	return displayComponent_->isHit(point);
 }
 
-sfg::Widget::Ptr Creep::getPanel()
+sfg::Widget::Ptr Creep::getPanel(std::shared_ptr<LevelInstance>  /*levelInstance*/)
 {
 	return sfg::Label::Create("Creep #" + std::to_string((intptr_t)this));
 }

@@ -237,6 +237,20 @@ static void removeFromVectorIf(std::vector<T> & v, F f)
 	v.resize(std::distance(v.begin(), it));
 }
 
+void LevelInstance::sellTower(Tower* tower)
+{
+	sf::Vector2f posf = tower->getPosition();
+	sf::Vector2i pos = { (int)posf.x, (int)posf.y };
+	int cost = tower->getSellCost();
+
+	removeFromVectorIf(towers_, [&tower](const std::shared_ptr<Tower>& x) { return x.get() == tower; });
+	towerMap_[pos.y * level_->getWidth() + pos.x].reset();
+
+	gridNavigation_.update();
+	gridTowerPlacement_.updateTowerRestrictions();
+	money_ += cost;
+}
+
 void LevelInstance::update(sf::Time dt)
 {
 	if (wavesRunning_)

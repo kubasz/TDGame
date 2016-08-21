@@ -32,6 +32,11 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 	guiWaveLabel_->SetRequisition({ 0.f, 16.f });
 	guiWaveLabel_->SetAlignment({ 0.f, 0.f });
 
+	guiSelectObjectsButton_ = sfg::Button::Create("Select objects");
+	guiSelectObjectsButton_->GetSignal(sfg::Button::OnLeftClick).Connect([this]() {
+		isPlacingTower_ = false;
+	});
+
 	guiGameStartButton_ = sfg::Button::Create("Send creeps");
 	guiGameStartButton_->GetSignal(sfg::Button::OnLeftClick).Connect([this]() {
 		levelInstance_->resume();
@@ -44,6 +49,7 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 	guiMainLayout->PackEnd(guiCashLabel_, false);
 	guiMainLayout->PackEnd(guiLivesLabel_, false);
 	guiMainLayout->PackEnd(guiWaveLabel_, false);
+	guiMainLayout->PackEnd(guiSelectObjectsButton_, false);
 	createTowerCreationButtons(guiMainLayout);
 	guiMainLayout->PackEnd(guiGameStartButton_, false);
 	guiMainLayout->PackEnd(guiInfoPanelLocation_, false);
@@ -139,8 +145,8 @@ void LevelGameState::handleClick(sf::Vector2i /*position*/)
 		selectedObject_ = levelInstance_->selectAt(lastMouseLevelPosition_);
 
 		guiInfoPanelLocation_->RemoveAll();
-		if (selectedObject_)
-			guiInfoPanelLocation_->PackEnd(selectedObject_->getPanel(), true);
+		if (std::shared_ptr<Selectable> selectedObject = selectedObject_.lock())
+			guiInfoPanelLocation_->PackEnd(selectedObject->getPanel(levelInstance_), true);
 	}
 }
 
@@ -274,6 +280,8 @@ void LevelGameState::createLostPopup()
 
 void LevelGameState::update(sf::Time dt)
 {
+	if (!selectedObject_.lock())
+		guiInfoPanelLocation_->RemoveAll();
 	guiDesktop_.Update(dt.asSeconds());
 	levelInstance_->update(dt);
 
@@ -379,7 +387,7 @@ void LevelGameState::handleEvent(const sf::Event & evt)
 
 	if ((evt.type == sf::Event::KeyPressed) && (evt.key.code == sf::Keyboard::Escape)) {
 		isPlacingTower_ = false;
-		selectedObject_ = nullptr;
+		selectedObject_.reset();
 		guiInfoPanelLocation_->RemoveAll();
 	}
 	if(!handled)

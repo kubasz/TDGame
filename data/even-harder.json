@@ -1,0 +1,58 @@
+{
+	"name": "Harder level",
+	"starting-lives": 10,
+	"starting-money": 150,
+	"grid-size": [ 16, 16 ],
+	"goal": [ 8, 8 ],
+	"waves": [
+		{
+			"start-time": 3.0,
+			"creeps": [
+				{
+					"type": "GenericCreep",
+					"hp": 500,
+					"bounty": 25,
+					"spawn-at": [ 0, 0 ],
+					"spawn-time": {
+						"start": 0.0,
+						"count": 50,
+						"interval": 1.0
+					}
+				},
+				{
+					"type": "GenericCreep",
+					"hp": 500,
+					"bounty": 25,
+					"spawn-at": [ 0, 15 ],
+					"spawn-time": {
+						"start": 0.0,
+						"count": 50,
+						"interval": 1.0
+					}
+				},
+				{
+					"type": "GenericCreep",
+					"hp": 500,
+					"bounty": 25,
+					"spawn-at": [ 15, 15 ],
+					"spawn-time": {
+						"start": 0.0,
+						"count": 50,
+						"interval": 1.0
+					}
+				},
+				{
+					"type": "GenericCreep",
+					"hp": 500,
+					"bounty": 25,
+					"spawn-at": [ 15, 0 ],
+					"spawn-time": {
+						"start": 0.0,
+						"count": 50,
+						"interval": 1.0
+					}
+				}
+			]
+		}
+	]
+}
