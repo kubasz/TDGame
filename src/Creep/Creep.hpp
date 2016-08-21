@@ -13,6 +13,7 @@
 #include "../Renderable.hpp"
 #include "CreepDisplayComponent.hpp"
 #include "CreepWalkComponent.hpp"
+#include "Buff.hpp"
 
 class Game;
 
@@ -28,15 +29,39 @@ private:
 	int32_t life_, maxLife_;
 	int32_t bounty_;
 	sf::Sound sound_;
+	std::vector<CreepBuff> buffs_;
 
 public:
 	Creep(int32_t maxLife, int32_t bounty,
 		std::unique_ptr<CreepWalkComponent> walkComponent,
 		std::unique_ptr<CreepDisplayComponent> displayComponent, Game &game);
 
+	inline void applyBuff(CreepBuff buff)
+	{
+		buffs_.push_back(buff);
+	}
+
+	inline float queryBuff(CreepBuff::Type type)
+	{
+		float accum = 0.0f;
+		for(const CreepBuff& buff: buffs_)
+		{
+			if(buff.type == type)
+				accum += buff.strength;
+		}
+		return accum;
+	}
+
 	inline void update(sf::Time dt, NavigationProvider<sf::Vector2i> & navigation)
 	{
-		walkComponent_->update(dt, navigation);
+		// update buffs
+		for(CreepBuff& buff: buffs_)
+		{
+			buff.duration -= dt.asMicroseconds() * 1e-6;
+		}
+		std::remove_if(buffs_.begin(), buffs_.end(), [](const CreepBuff& buff){return buff.duration <= 0.0;});
+		// update walk
+		walkComponent_->update(dt, navigation, queryBuff(CreepBuff::Type::BUFF_SPEED));
 	}
 
 	inline virtual void render(sf::RenderTarget & target) override

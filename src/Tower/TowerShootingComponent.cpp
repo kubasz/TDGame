@@ -13,6 +13,6 @@ void TowerLinearShootingComponent::update(sf::Time dt, BulletFactory & bulletFac
 
 	if (charge_ <= 0.f) {
 		bulletFactory.shoot(bulletType_);
-		charge_ += maxCharge_;
+		charge_ += maxCharge_ + (rand()%1000)/4000.f;
 	}
 }

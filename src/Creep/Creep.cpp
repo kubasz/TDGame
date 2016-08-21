@@ -1,4 +1,5 @@
 #include <SFGUI/Widgets.hpp>
+#include <cmath>
 #include "Creep.hpp"
 
 Creep::Creep(
@@ -25,6 +26,11 @@ sfg::Widget::Ptr Creep::getPanel()
 
 void Creep::inflictDamage(int32_t damage)
 {
-	life_ -= damage;
+	float vuln = queryBuff(CreepBuff::Type::BUFF_VULNERABILITY)/100.f + 1.f;
+	life_ -= int(round(damage*vuln));
+	if(life_<0)
+	{
+		life_ = 0;
+	}
 	sound_.play();
 }
