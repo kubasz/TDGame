@@ -22,9 +22,10 @@ LevelSelectGameState::LevelSelectGameState(Game & game)
 	: game_(game)
 {
 	guiMainWindow_ = sfg::Window::Create(sfg::Window::Style::BACKGROUND);
+	guiDesktop_.SetProperty( "*", "FontName", "data/FiraSans-Regular.ttf" );
 	guiDesktop_.Add(guiMainWindow_);
 
-	setPath(".");
+	setPath("data");
 }
 
 void LevelSelectGameState::setPath(const std::string & path)

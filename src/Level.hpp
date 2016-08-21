@@ -163,6 +163,11 @@ public:
 		return money_;
 	}
 
+	void cheatAddMoney(int64_t amount)
+	{
+		money_ += amount;
+	}
+
 	int64_t getLives() const
 	{
 		return lives_;

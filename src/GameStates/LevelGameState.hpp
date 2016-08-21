@@ -37,6 +37,12 @@ private:
 	sf::Vector2f lastMouseLevelPosition_;
 	sf::Vector2i hoveredTile_;
 
+	// Console
+	sfg::Window::Ptr conguiWindow_;
+	sfg::Label::Ptr conguiOutput_;
+	sfg::Entry::Ptr conguiInput_;
+	bool conguiActive_;
+
 	std::shared_ptr<Selectable> selectedObject_;
 
 	std::string placedTowerTypeName_;
@@ -47,7 +53,8 @@ private:
 
 	void handleResize(int width, int height);
 	void handleClick(sf::Vector2i position);
-	void handleKeyPress(sf::Keyboard::Key key);
+	bool handleKeyPress(sf::Keyboard::Key key);
+	void handleCommand(sf::String cmd);
 
 	void createEndingPopup(const std::string & title, const std::string & content);
 	void createWonPopup();

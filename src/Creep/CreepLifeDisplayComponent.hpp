@@ -13,6 +13,7 @@ class CreepLifeDisplayComponent final : public CreepDisplayComponent
 private:
 	Creep * owner_;
 	sf::RectangleShape shape_;
+	sf::RectangleShape backgroundShape_;
 	sf::Vector2f size_;
 	bool hideOnFull_;
 

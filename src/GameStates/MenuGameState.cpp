@@ -6,6 +6,7 @@
 MenuGameState::MenuGameState(Game & game)
 	: game_(game)
 {
+	guiDesktop_.SetProperty( "*", "FontName", "data/FiraSans-Regular.ttf" );
 	auto guiChooseLevel = sfg::Button::Create("Choose level");
 	guiChooseLevel->GetSignal(sfg::Button::OnLeftClick).Connect([this]() {
 		// game_.setNextState(GameState::Identifier::LEVEL);
@@ -24,6 +25,7 @@ MenuGameState::MenuGameState(Game & game)
 	auto guiWindow = sfg::Window::Create();
 	guiWindow->SetTitle(L"Menu");
 	guiWindow->Add(guiTable);
+	guiWindow->SetPosition(sf::Vector2f(16.f,16.f));
 
 	guiDesktop_.Add(guiWindow);
 }

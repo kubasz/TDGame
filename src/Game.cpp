@@ -19,10 +19,11 @@
 Game::Game(int /*argc*/, char ** /*argv*/)
 {
 	srand((unsigned int)time(nullptr));
+
 	sfg::Renderer::Set(sfg::VertexArrayRenderer::Create());
 
 	const sf::Uint32 style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
-	window_.create(sf::VideoMode(640, 480), "TDFramework", style, sf::ContextSettings(0, 0, 8));
+	window_.create(sf::VideoMode(800, 600), "TDFramework", style, sf::ContextSettings(0, 0, 8));
 	if (!window_.isOpen())
 		throw std::runtime_error("Failed to create window");
 
@@ -92,7 +93,7 @@ int Game::run()
 			window_.display();
 		}
 	}
-	
+
 	return 0;
 }
 

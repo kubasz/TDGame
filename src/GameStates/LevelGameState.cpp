@@ -18,6 +18,7 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 	, oldLives_(-1)
 	, oldWave_(-2)
 	, isPlacingTower_(false)
+	, conguiActive_(false)
 {
 	guiCashLabel_ = sfg::Label::Create();
 	guiCashLabel_->SetRequisition({ 0.f, 16.f });
@@ -49,6 +50,30 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 
 	guiMainWindow_ = sfg::Window::Create(sfg::Window::Style::BACKGROUND);
 	guiMainWindow_->Add(guiMainLayout);
+
+	conguiWindow_ = sfg::Window::Create(sfg::Window::Style::BACKGROUND);
+	conguiInput_ = sfg::Entry::Create("");
+	conguiInput_->SetRequisition(sf::Vector2f(500.f,0.f));
+	conguiInput_->GetSignal(conguiInput_->OnTextChanged).Connect(
+				[this](){
+					if(this->conguiInput_->GetText().find("'") != sf::String::InvalidPos)
+					{
+						this->conguiInput_->SetText("");
+					}
+				}
+				);
+	conguiOutput_ = sfg::Label::Create("");
+	conguiOutput_->SetRequisition(sf::Vector2f(500.f,64.f));
+	auto conguiLayout = sfg::Box::Create(sfg::Box::Orientation::VERTICAL);
+	conguiLayout->PackEnd(conguiOutput_, true);
+	conguiLayout->PackEnd(conguiInput_, false);
+	conguiWindow_->Add(conguiLayout);
+	conguiWindow_->SetTitle("Console");
+	conguiWindow_->SetPosition(sf::Vector2f(8.f, 8.f));
+	conguiWindow_->Show(false);
+	guiDesktop_.SetProperty( "*", "FontName", "data/FiraSans-Regular.ttf" );
+	guiDesktop_.Add(conguiWindow_);
+
 	guiDesktop_.Add(guiMainWindow_);
 
 	handleResize(game.getWidth(), game.getHeight());
@@ -119,7 +144,7 @@ void LevelGameState::handleClick(sf::Vector2i /*position*/)
 	}
 }
 
-void LevelGameState::handleKeyPress(sf::Keyboard::Key key)
+bool LevelGameState::handleKeyPress(sf::Keyboard::Key key)
 {
 	switch (key) {
 	case sf::Keyboard::Left:
@@ -134,8 +159,69 @@ void LevelGameState::handleKeyPress(sf::Keyboard::Key key)
 	case sf::Keyboard::Down:
 		levelView_.move({ 0.f, 1.f });
 		break;
+	case sf::Keyboard::Tilde:
+		if(conguiActive_)
+		{
+			conguiWindow_->Show(false);
+			conguiActive_ = false;
+			conguiInput_->SetText("");
+		}
+		else
+		{
+			conguiWindow_->Show(true);
+			guiDesktop_.BringToFront(conguiInput_);
+			conguiActive_ = true;
+			conguiInput_->SetText("");
+			sf::Event ev;
+			ev.type = sf::Event::MouseButtonPressed;
+			ev.mouseButton.button = sf::Mouse::Button::Left;
+			sf::Vector2f apos = conguiInput_->GetAbsolutePosition() + sf::Vector2f(5.f,5.f);
+			ev.mouseButton.x = int(apos.x);
+			ev.mouseButton.y = int(apos.y);
+			guiDesktop_.HandleEvent(ev);
+		}
+		guiDesktop_.Refresh();
+		return true;
+	case sf::Keyboard::Return:
+		if(conguiActive_)
+		{
+			auto cmd = conguiInput_->GetText();
+			handleCommand(cmd);
+			conguiInput_->SetText("");
+			return true;
+		}
+		break;
 	default:
 		break;
+	}
+	return false;
+}
+
+void LevelGameState::handleCommand(sf::String scmd)
+{
+	std::string cstr = scmd.toAnsiString();
+	std::istringstream iss(cstr);
+	std::vector<std::string> tokens {std::istream_iterator<std::string>{iss}, std::istream_iterator<std::string>{}};
+	if(tokens.size() > 0) {
+		std::string cmd = tokens[0];
+		if(cmd[0] == '`')
+		{
+			cmd = cmd.substr(1);
+		}
+		if(cmd == "help")
+		{
+			conguiOutput_->SetText("Cmds: help, money %");
+		}
+		else if(cmd == "money")
+		{
+			if(tokens.size()!=2)
+			{
+				conguiOutput_->SetText("Usage: money [-]amount");
+				return;
+			}
+			int amount = std::strtol(tokens[1].c_str(), nullptr, 10);
+			this->levelInstance_->cheatAddMoney(amount);
+		}
 	}
 }
 
@@ -222,12 +308,12 @@ void LevelGameState::render(sf::RenderTarget & target)
 	levelInstance_->render(target);
 
 	if (isPlacingTower_) {
-		sf::RectangleShape rs;
+		sf::CircleShape rs;
 		if (levelInstance_->canPlaceTowerHere(hoveredTile_))
 			rs.setFillColor(sf::Color(0, 255, 0, 127));
 		else
 			rs.setFillColor(sf::Color(255, 0, 0, 127));
-		rs.setSize({ 1.f, 1.f });
+		rs.setRadius(0.5f);
 		rs.setPosition((float)hoveredTile_.x - 0.5f, (float)hoveredTile_.y - 0.5f);
 		target.draw(rs);
 	}
@@ -255,6 +341,7 @@ void LevelGameState::render(sf::RenderTarget & target)
 
 void LevelGameState::handleEvent(const sf::Event & evt)
 {
+	bool handled = false;
 	if (evt.type == sf::Event::Resized)
 		handleResize(evt.size.width, evt.size.height);
 
@@ -270,13 +357,13 @@ void LevelGameState::handleEvent(const sf::Event & evt)
 	}
 
 	if (evt.type == sf::Event::KeyPressed)
-		handleKeyPress(evt.key.code);
-	
+		handled = handleKeyPress(evt.key.code);
+
 	if ((evt.type == sf::Event::KeyPressed) && (evt.key.code == sf::Keyboard::Escape)) {
 		isPlacingTower_ = false;
 		selectedObject_ = nullptr;
 		guiInfoPanelLocation_->RemoveAll();
 	}
-
-	guiDesktop_.HandleEvent(evt);
+	if(!handled)
+		guiDesktop_.HandleEvent(evt);
 }
