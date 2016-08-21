@@ -24,4 +24,15 @@ public:
 	virtual void render(sf::RenderTarget & target) override;
 };
 
+//! A very simple look for Bullet that looks like laser.
+class BulletLaserDisplayComponent final : public BulletDisplayComponent
+{
+private:
+	BulletMovementComponent & movementComponent_;
+
+public:
+	BulletLaserDisplayComponent(BulletMovementComponent &movementComponent);
+	virtual void render(sf::RenderTarget & target) override;
+};
+
 #endif // TDF_BULLET_DISPLAY_COMPONENT_HPP

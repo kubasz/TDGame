@@ -22,7 +22,7 @@ Game::Game(int /*argc*/, char ** /*argv*/)
 	sfg::Renderer::Set(sfg::VertexArrayRenderer::Create());
 
 	const sf::Uint32 style = sf::Style::Titlebar | sf::Style::Close | sf::Style::Resize;
-	window_.create(sf::VideoMode(640, 480), "TDFramework", style);
+	window_.create(sf::VideoMode(640, 480), "TDFramework", style, sf::ContextSettings(0, 0, 8));
 	if (!window_.isOpen())
 		throw std::runtime_error("Failed to create window");
 
@@ -129,7 +129,7 @@ int main(int argc, char ** argv)
 	
 	catch (std::runtime_error & err) {
 		std::cout << "Runtime error: " << err.what() << std::endl;
-		WAIT_ANY_KEY;
+		//WAIT_ANY_KEY;
 		return 1;
 	}
 }

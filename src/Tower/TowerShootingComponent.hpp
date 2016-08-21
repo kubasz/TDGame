@@ -20,9 +20,10 @@ class TowerLinearShootingComponent final : public TowerShootingComponent
 {
 private:
 	float charge_, maxCharge_;
+	std::string bulletType_;
 
 public:
-	TowerLinearShootingComponent(float shotsPerSecond);
+	TowerLinearShootingComponent(float shotsPerSecond, std::string bulletType);
 	virtual void update(sf::Time dt, BulletFactory & bulletFactory) override;
 };
 

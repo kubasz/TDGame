@@ -1,6 +1,5 @@
 build*
 *.swp
-*build/
 *.user
 CMakeFiles
 CMakeCache.txt
@@ -9,3 +8,4 @@ Makefile
 *~
 TDGame
 TDGame.exe
+/.idea

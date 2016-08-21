@@ -18,6 +18,7 @@ public:
 	virtual void update(sf::Time dt) = 0;
 
 	virtual sf::Vector2f getPosition() const = 0;
+	virtual sf::Vector2f getTargetPosition() const = 0;
 	virtual bool isAlive() const = 0;
 };
 
@@ -38,6 +39,29 @@ public:
 		sf::Vector2f startingPosition);
 	void update(sf::Time dt) override;
 	virtual sf::Vector2f getPosition() const override;
+	virtual sf::Vector2f getTargetPosition() const override;
+	virtual bool isAlive() const override;
+};
+
+
+//! Implements a bullet which does not move and hits the target after a given delay.
+class BulletLaserMovementComponent final : public BulletMovementComponent
+{
+private:
+	sf::Vector2f position_;
+	float timeToHit_;
+	std::weak_ptr<Creep> target_;
+	int32_t damage_;
+
+public:
+	BulletLaserMovementComponent(
+			float time,
+			const std::shared_ptr<Creep> & target,
+			int32_t damage,
+			sf::Vector2f startingPosition);
+	void update(sf::Time dt) override;
+	virtual sf::Vector2f getPosition() const override;
+	virtual sf::Vector2f getTargetPosition() const override;
 	virtual bool isAlive() const override;
 };
 
