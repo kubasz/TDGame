@@ -49,7 +49,9 @@ void Game::loadTextures()
 {
 	//loading textures into resources holder
 	textures_holder_.acquire("Tower", 
-		thor::Resources::fromFile <sf::Texture>("data/Images/image.png"));
+		thor::Resources::fromFile <sf::Texture>("data/Images/tower.png"));
+	textures_holder_.acquire("Wall",
+		thor::Resources::fromFile <sf::Texture>("data/Images/wall.png"));
 	textures_holder_.acquire("Creep", 
 		thor::Resources::fromFile <sf::Texture>("data/Images/creep.png"));
 }
