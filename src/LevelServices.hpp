@@ -58,6 +58,7 @@ private:
 	std::unique_ptr<int32_t[]> parents_;
 	std::unique_ptr<int32_t[]> pre_;
 	std::unique_ptr<int32_t[]> low_;
+	std::unique_ptr<int32_t[]> dp_;
 
 public:
 	GridTowerPlacementOracle(LevelInstance & levelInstance);
