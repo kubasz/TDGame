@@ -172,13 +172,7 @@ bool LevelGameState::handleKeyPress(sf::Keyboard::Key key)
 			guiDesktop_.BringToFront(conguiInput_);
 			conguiActive_ = true;
 			conguiInput_->SetText("");
-			sf::Event ev;
-			ev.type = sf::Event::MouseButtonPressed;
-			ev.mouseButton.button = sf::Mouse::Button::Left;
-			sf::Vector2f apos = conguiInput_->GetAbsolutePosition() + sf::Vector2f(5.f,5.f);
-			ev.mouseButton.x = int(apos.x);
-			ev.mouseButton.y = int(apos.y);
-			guiDesktop_.HandleEvent(ev);
+			conguiInput_->GrabFocus();
 		}
 		guiDesktop_.Refresh();
 		return true;
@@ -381,6 +375,14 @@ void LevelGameState::handleEvent(const sf::Event & evt)
 		isPlacingTower_ = false;
 		selectedObject_ = nullptr;
 		guiInfoPanelLocation_->RemoveAll();
+	}
+	if(evt.type == sf::Event::KeyReleased)
+	{
+		if(evt.key.code == sf::Keyboard::Tilde)
+		{
+			handled = true;
+			conguiInput_->SetText("");
+		}
 	}
 	if(!handled)
 		guiDesktop_.HandleEvent(evt);
