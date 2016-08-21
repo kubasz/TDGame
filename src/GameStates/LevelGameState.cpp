@@ -17,8 +17,8 @@ LevelGameState::LevelGameState(Game & game, std::istream & source)
 	, oldCash_(-1)
 	, oldLives_(-1)
 	, oldWave_(-2)
-	, isPlacingTower_(false)
 	, conguiActive_(false)
+	, isPlacingTower_(false)
 {
 	guiCashLabel_ = sfg::Label::Create();
 	guiCashLabel_->SetRequisition({ 0.f, 16.f });
