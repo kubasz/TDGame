@@ -209,6 +209,7 @@ public:
 		int32_t life, int32_t bounty,
 		sf::Vector2i position);
 	void registerBullet(std::shared_ptr<Bullet> bullet);
+	void sellTower(Tower* tower);
 
 	void update(sf::Time dt);
 	void render(sf::RenderTarget & target);

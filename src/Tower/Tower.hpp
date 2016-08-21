@@ -30,16 +30,19 @@ class Tower final : public Selectable, public Renderable
 {
 private:
 	sf::Vector2f position_;
+	int sellCost_;
 	std::unique_ptr<TowerTargetingComponent> targetingComponent_;
 	std::unique_ptr<TowerShootingComponent> shootingComponent_;
 	std::unique_ptr<TowerDisplayComponent> displayComponent_;
 public:
 	Tower(
 		sf::Vector2f position,
+		int sellCost,
 		std::unique_ptr<TowerTargetingComponent> targeting,
 		std::unique_ptr<TowerShootingComponent> shooting,
 		std::unique_ptr<TowerDisplayComponent> display)
 		: position_(position)
+		, sellCost_(sellCost)
 		, targetingComponent_(std::move(targeting))
 		, shootingComponent_(std::move(shooting))
 		, displayComponent_(std::move(display))
@@ -51,7 +54,12 @@ public:
 	sf::Vector2f getPosition() const;
 
 	virtual bool isHit(sf::Vector2f point) const override;
-	virtual sfg::Widget::Ptr getPanel() override;
+	virtual sfg::Widget::Ptr getPanel(std::shared_ptr<LevelInstance> levelInstance) override;
+
+	int getSellCost()
+	{
+		return sellCost_;
+	}
 };
 
 #endif // TDF_TOWER_HPP

@@ -82,7 +82,7 @@ public:
 	void inflictDamage(int32_t damage);
 
 	virtual bool isHit(sf::Vector2f point) const override;
-	virtual sfg::Widget::Ptr getPanel() override;
+	virtual sfg::Widget::Ptr getPanel(std::shared_ptr<LevelInstance> levelInstance) override;
 };
 
 #endif // TDF_CREEP_HPP

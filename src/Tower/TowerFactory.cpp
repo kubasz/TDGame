@@ -22,6 +22,7 @@ static std::vector<std::pair<std::string, towerTypeInfo_t>> typeInfos_ = []()
 				position, game__.getTexture("Tower"));
 			return std::make_shared<Tower>(
 				position,
+				35,
 				std::move(targeting),
 				std::move(shooting),
 				std::move(display));
@@ -36,6 +37,7 @@ static std::vector<std::pair<std::string, towerTypeInfo_t>> typeInfos_ = []()
                     position, game__.getTexture("Tower"));
 				return std::make_shared<Tower>(
 						position,
+						50,
 						std::move(targeting),
 						std::move(shooting),
 						std::move(display));
@@ -51,6 +53,7 @@ static std::vector<std::pair<std::string, towerTypeInfo_t>> typeInfos_ = []()
 				    position, game__.getTexture("Tower"));
 				return std::make_shared<Tower>(
 						position,
+						100,
 						std::move(targeting),
 						std::move(shooting),
 						std::move(display));
@@ -65,6 +68,7 @@ static std::vector<std::pair<std::string, towerTypeInfo_t>> typeInfos_ = []()
 				auto display = std::make_unique<TowerSimpleDisplayComponent>(position, game__.getTexture("Wall"));
 				return std::make_shared<Tower>(
 						position,
+						20,
 						std::move(targeting),
 						std::move(shooting),
 						std::move(display));

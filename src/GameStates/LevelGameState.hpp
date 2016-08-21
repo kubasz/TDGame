@@ -23,6 +23,7 @@ private:
 	sfg::Label::Ptr guiCashLabel_;
 	sfg::Label::Ptr guiLivesLabel_;
 	sfg::Label::Ptr guiWaveLabel_;
+	sfg::Button::Ptr guiSelectObjectsButton_;
 	sfg::Button::Ptr guiGameStartButton_;
 	sfg::Box::Ptr guiInfoPanelLocation_;
 	sfg::Window::Ptr guiStatusWindow_;
@@ -43,7 +44,7 @@ private:
 	sfg::Entry::Ptr conguiInput_;
 	bool conguiActive_;
 
-	std::shared_ptr<Selectable> selectedObject_;
+	std::weak_ptr<Selectable> selectedObject_;
 
 	std::string placedTowerTypeName_;
 	bool isPlacingTower_;
