@@ -7,6 +7,7 @@
 #include <SFML/System.hpp>
 
 class Creep;
+class BulletDamageComponent;
 
 //! A component for Bullet implementing movement logic.
 class BulletMovementComponent
@@ -26,16 +27,16 @@ public:
 class BulletTimedMovementComponent final : public BulletMovementComponent
 {
 private:
+	std::unique_ptr<BulletDamageComponent> damageComponent_;
 	sf::Vector2f position_;
 	float timeToHit_;
 	std::weak_ptr<Creep> target_;
-	int32_t damage_;
 
 public:
 	BulletTimedMovementComponent(
+		std::unique_ptr<BulletDamageComponent> damageComponent,
 		float time,
 		const std::shared_ptr<Creep> & target,
-		int32_t damage,
 		sf::Vector2f startingPosition);
 	void update(sf::Time dt) override;
 	virtual sf::Vector2f getPosition() const override;
@@ -48,17 +49,17 @@ public:
 class BulletLaserMovementComponent final : public BulletMovementComponent
 {
 private:
+	std::unique_ptr<BulletDamageComponent> damageComponent_;
 	sf::Vector2f position_;
 	float timeToHit_;
 	std::weak_ptr<Creep> target_;
-	int32_t damage_;
 
 public:
 	BulletLaserMovementComponent(
-			float time,
-			const std::shared_ptr<Creep> & target,
-			int32_t damage,
-			sf::Vector2f startingPosition);
+		std::unique_ptr<BulletDamageComponent> damageComponent,
+		float time,
+		const std::shared_ptr<Creep> & target,
+		sf::Vector2f startingPosition);
 	void update(sf::Time dt) override;
 	virtual sf::Vector2f getPosition() const override;
 	virtual sf::Vector2f getTargetPosition() const override;

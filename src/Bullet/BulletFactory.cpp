@@ -2,6 +2,7 @@
 #include "Bullet.hpp"
 #include "BulletDisplayComponent.hpp"
 #include "BulletMovementComponent.hpp"
+#include "BulletDamageComponent.hpp"
 #include "BulletFactory.hpp"
 #include "../Level.hpp"
 
@@ -10,15 +11,22 @@ std::shared_ptr<Bullet> BulletFactory::innerCreateBullet(
 {
 	if (bulletName == "GenericBullet") {
 		auto movement = std::make_unique<BulletTimedMovementComponent>(
-			1.f, target_, 20, position_);
+			std::make_unique<BulletSimpleDamageComponent>(20), 1.f, target_, position_);
 		auto display = std::make_unique<BulletSimpleDisplayComponent>(0.0625f, *movement.get());
 		return std::make_shared<Bullet>(std::move(movement), std::move(display));
 	}
 
 	if (bulletName == "LaserBullet") {
 		auto movement = std::make_unique<BulletLaserMovementComponent>(
-				0.1f, target_, 10, position_);
+			std::make_unique<BulletSimpleDamageComponent>(10), 0.1f, target_, position_);
 		auto display = std::make_unique<BulletLaserDisplayComponent>(*movement.get());
+		return std::make_shared<Bullet>(std::move(movement), std::move(display));
+	}
+
+	if (bulletName == "SlownessBullet") {
+		auto movement = std::make_unique<BulletLaserMovementComponent>(
+				std::make_unique<BulletBuffDamageComponent>(CreepBuff(5, CreepBuff::Type::BUFF_SPEED, -20)), 1.0f, target_, position_);
+		auto display = std::make_unique<BulletSimpleDisplayComponent>(0.15f, *movement.get());
 		return std::make_shared<Bullet>(std::move(movement), std::move(display));
 	}
 

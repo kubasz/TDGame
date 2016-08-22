@@ -242,11 +242,7 @@ void LevelGameState::handleCommand(sf::String scmd)
 			auto& cr = this->levelInstance_->getCreeps();
 			for(auto& creep : cr)
 			{
-				CreepBuff buff = {};
-				buff.type = CreepBuff::Type::BUFF_SPEED;
-				buff.duration = 5.0;
-				buff.strength = amount;
-				creep->applyBuff(buff);
+				creep->applyBuff(CreepBuff(5.0f, CreepBuff::Type::BUFF_SPEED, amount));
 			}
 		}
 	}
