@@ -24,9 +24,16 @@ std::shared_ptr<Bullet> BulletFactory::innerCreateBullet(
 	}
 
 	if (bulletName == "SlownessBullet") {
-		auto movement = std::make_unique<BulletLaserMovementComponent>(
+		auto movement = std::make_unique<BulletTimedMovementComponent>(
 				std::make_unique<BulletBuffDamageComponent>(CreepBuff(5, CreepBuff::Type::BUFF_SPEED, -20)), 1.0f, target_, position_);
-		auto display = std::make_unique<BulletSimpleDisplayComponent>(0.15f, *movement.get());
+		auto display = std::make_unique<BulletSimpleDisplayComponent>(0.25f, *movement.get());
+		return std::make_shared<Bullet>(std::move(movement), std::move(display));
+	}
+
+	if (bulletName == "WeaknessBullet") {
+		auto movement = std::make_unique<BulletTimedMovementComponent>(
+				std::make_unique<BulletBuffDamageComponent>(CreepBuff(10, CreepBuff::Type::BUFF_VULNERABILITY, 500)), 1.0f, target_, position_);
+		auto display = std::make_unique<BulletSimpleDisplayComponent>(0.25f, *movement.get());
 		return std::make_shared<Bullet>(std::move(movement), std::move(display));
 	}
 
