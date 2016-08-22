@@ -172,7 +172,7 @@ void GridTowerPlacementOracle::updateTowerRestrictions()
 		int32_t minimum = preCounter++;
 		pre_[current] = minimum;
 		parents_[current] = parent;
-		dp_[current] = permanentlyOccupied_[current];
+		dp_[current] = permanentlyOccupied_[current] || occupiedByCreeps_[current];
 
 		auto processChild = [&](int32_t child, int32_t nx, int32_t ny) {
 			if (child != parent && !levelInstance_.getTowerAt(nx, ny)) {
@@ -256,4 +256,6 @@ void GridTowerPlacementOracle::updateCreepRestrictions()
 			occupiedByCreeps_[point.y * width + point.x] = true;
 		}
 	}
+
+	updateTowerRestrictions();
 }
