@@ -1,12 +1,13 @@
 #!/usr/bin/python
 import json
+import math
 
 level = {
 	'name': 'Generated level',
 	'starting-lives': 10,
 	'starting-money': 100,
-	'grid-size': [16, 16],
-	'goal':	[8, 8],
+	'grid-size': [15, 15],
+	'goal':	[7, 7],
 	'waves': []
 }
 
@@ -14,8 +15,8 @@ time = 3
 for i in range(10):
 	creepdata = { 
 		'type': 'GenericCreep',
-		'hp': 40*(i+1),
-		'bounty': 10*(i+1),
+		'hp': 40*math.pow(i+1, 1.5),
+		'bounty': 5*(i+1),
 		'spawn-at': [0, 0],
 		'spawn-time': {
 			'start': 0.0,
@@ -31,7 +32,7 @@ for i in range(10):
 		'start-time': time,
 		'creeps': [
 			creeps_at(creepdata, [0, 0]),
-			creeps_at(creepdata, [15, 15])
+			creeps_at(creepdata, [14, 14])
 		]
 	})
 	time += 5*(i+1)*2+10
