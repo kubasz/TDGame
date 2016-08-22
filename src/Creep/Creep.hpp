@@ -28,13 +28,12 @@ private:
 	std::unique_ptr<CreepDisplayComponent> displayComponent_;
 	int32_t life_, maxLife_;
 	int32_t bounty_;
-	sf::Sound sound_;
 	std::vector<CreepBuff> buffs_;
 
 public:
 	Creep(int32_t maxLife, int32_t bounty,
 		std::unique_ptr<CreepWalkComponent> walkComponent,
-		std::unique_ptr<CreepDisplayComponent> displayComponent, Game &game);
+		std::unique_ptr<CreepDisplayComponent> displayComponent);
 
 	inline void applyBuff(CreepBuff buff)
 	{

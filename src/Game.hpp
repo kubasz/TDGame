@@ -26,8 +26,12 @@ private:
 
 	std::unique_ptr<GameState> currentState_, nextState_;
 
+	//! Load all resources into thor::ResourceHolder
 	void loadResources();
+
+	//! Load textures into thor::ResourceHolder
 	void loadTextures();
+	//! Load sounds into thor::ResourceHolder
 	void loadSounds();
 
 public:

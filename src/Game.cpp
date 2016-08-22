@@ -47,7 +47,6 @@ void Game::loadResources()
 
 void Game::loadTextures()
 {
-	//loading textures into resources holder
 	textures_holder_.acquire("Tower", 
 		thor::Resources::fromFile <sf::Texture>("data/Images/tower.png"));
 	textures_holder_.acquire("Wall",
@@ -60,8 +59,7 @@ void Game::loadTextures()
 
 void Game::loadSounds()
 {
-	//loading textures into resources holder
-	sounds_holder_.acquire("Creep", 
+	sounds_holder_.acquire("Tower",
 		thor::Resources::fromFile <sf::SoundBuffer>("data/Audio/creep.ogg"));
 }
 
