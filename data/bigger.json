@@ -1,0 +1,36 @@
+{
+	"name": "Sample level",
+	"starting-lives": 10,
+	"starting-money": 100,
+	"grid-size": [ 20, 20 ],
+	"goal": [ 10, 10 ],
+	"waves": [
+		{
+			"start-time": 3.0,
+			"creeps": [
+				{
+					"type": "GenericCreep",
+					"hp": 40,
+					"bounty": 10,
+					"spawn-at": [ 0, 0 ],
+					"spawn-time": {
+						"start": 0.0,
+						"count": 10,
+						"interval": 3.0
+					}
+				},
+				{
+					"type": "GenericCreep",
+					"hp": 40,
+					"bounty": 10,
+					"spawn-at": [ 19, 19 ],
+					"spawn-time": {
+						"start": 1.5,
+						"count": 10,
+						"interval": 3.0
+					}
+				}
+			]
+		}
+	]
+}

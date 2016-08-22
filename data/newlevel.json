@@ -1,0 +1,205 @@
+{
+    "goal": [
+        8, 
+        8
+    ], 
+    "starting-lives": 10, 
+    "grid-size": [
+        16, 
+        16
+    ], 
+    "starting-money": 100, 
+    "waves": [
+        {
+            "creeps": [
+                {
+                    "spawn-at": [
+                        0, 
+                        0
+                    ], 
+                    "hp": 40, 
+                    "spawn-time": {
+                        "count": 5, 
+                        "start": 0.0, 
+                        "interval": 2.0
+                    }, 
+                    "type": "GenericCreep", 
+                    "bounty": 10
+                }
+            ], 
+            "start-time": 3
+        }, 
+        {
+            "creeps": [
+                {
+                    "spawn-at": [
+                        0, 
+                        0
+                    ], 
+                    "hp": 80, 
+                    "spawn-time": {
+                        "count": 10, 
+                        "start": 0.0, 
+                        "interval": 2.0
+                    }, 
+                    "type": "GenericCreep", 
+                    "bounty": 20
+                }
+            ], 
+            "start-time": 23
+        }, 
+        {
+            "creeps": [
+                {
+                    "spawn-at": [
+                        0, 
+                        0
+                    ], 
+                    "hp": 120, 
+                    "spawn-time": {
+                        "count": 15, 
+                        "start": 0.0, 
+                        "interval": 2.0
+                    }, 
+                    "type": "GenericCreep", 
+                    "bounty": 30
+                }
+            ], 
+            "start-time": 53
+        }, 
+        {
+            "creeps": [
+                {
+                    "spawn-at": [
+                        0, 
+                        0
+                    ], 
+                    "hp": 160, 
+                    "spawn-time": {
+                        "count": 20, 
+                        "start": 0.0, 
+                        "interval": 2.0
+                    }, 
+                    "type": "GenericCreep", 
+                    "bounty": 40
+                }
+            ], 
+            "start-time": 93
+        }, 
+        {
+            "creeps": [
+                {
+                    "spawn-at": [
+                        0, 
+                        0
+                    ], 
+                    "hp": 200, 
+                    "spawn-time": {
+                        "count": 25, 
+                        "start": 0.0, 
+                        "interval": 2.0
+                    }, 
+                    "type": "GenericCreep", 
+                    "bounty": 50
+                }
+            ], 
+            "start-time": 143
+        }, 
+        {
+            "creeps": [
+                {
+                    "spawn-at": [
+                        0, 
+                        0
+                    ], 
+                    "hp": 240, 
+                    "spawn-time": {
+                        "count": 30, 
+                        "start": 0.0, 
+                        "interval": 2.0
+                    }, 
+                    "type": "GenericCreep", 
+                    "bounty": 60
+                }
+            ], 
+            "start-time": 203
+        }, 
+        {
+            "creeps": [
+                {
+                    "spawn-at": [
+                        0, 
+                        0
+                    ], 
+                    "hp": 280, 
+                    "spawn-time": {
+                        "count": 35, 
+                        "start": 0.0, 
+                        "interval": 2.0
+                    }, 
+                    "type": "GenericCreep", 
+                    "bounty": 70
+                }
+            ], 
+            "start-time": 273
+        }, 
+        {
+            "creeps": [
+                {
+                    "spawn-at": [
+                        0, 
+                        0
+                    ], 
+                    "hp": 320, 
+                    "spawn-time": {
+                        "count": 40, 
+                        "start": 0.0, 
+                        "interval": 2.0
+                    }, 
+                    "type": "GenericCreep", 
+                    "bounty": 80
+                }
+            ], 
+            "start-time": 353
+        }, 
+        {
+            "creeps": [
+                {
+                    "spawn-at": [
+                        0, 
+                        0
+                    ], 
+                    "hp": 360, 
+                    "spawn-time": {
+                        "count": 45, 
+                        "start": 0.0, 
+                        "interval": 2.0
+                    }, 
+                    "type": "GenericCreep", 
+                    "bounty": 90
+                }
+            ], 
+            "start-time": 443
+        }, 
+        {
+            "creeps": [
+                {
+                    "spawn-at": [
+                        0, 
+                        0
+                    ], 
+                    "hp": 400, 
+                    "spawn-time": {
+                        "count": 50, 
+                        "start": 0.0, 
+                        "interval": 2.0
+                    }, 
+                    "type": "GenericCreep", 
+                    "bounty": 100
+                }
+            ], 
+            "start-time": 543
+        }
+    ], 
+    "name": "Generated level"
+}
