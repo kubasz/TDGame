@@ -81,7 +81,6 @@ void Game::loadAnimation(const std::string& path, const std::string& id)
 		fin>>x1>>y1>>x2>>y2;
 
 		rect = sf::IntRect(x1, y1, x2, y2);
-		std::cerr<<i<<" "<<x1<<" "<<y1<<" "<<x2<<" "<<y2<<std::endl; 
 		tmp.addFrame(1.f/(float)n, rect);
 	}
 
