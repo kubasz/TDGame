@@ -60,7 +60,9 @@ void Game::loadTextures()
 void Game::loadSounds()
 {
 	sounds_holder_.acquire("Tower",
-		thor::Resources::fromFile <sf::SoundBuffer>("data/Audio/creep.ogg"));
+		thor::Resources::fromFile <sf::SoundBuffer>("data/Audio/tower.ogg"));
+	sounds_holder_.acquire("Laser",
+		thor::Resources::fromFile <sf::SoundBuffer>("data/Audio/laser.ogg"));
 }
 
 void Game::setNextState(std::unique_ptr<GameState> gameState)
