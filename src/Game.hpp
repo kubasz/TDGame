@@ -13,6 +13,7 @@
 #include <SFGUI/Widgets.hpp>
 
 #include <Thor/Resources.hpp>
+#include <Thor/Animations.hpp>
 
 class GameState;
 
@@ -23,6 +24,7 @@ private:
 	sfg::SFGUI sfgui_;
 	thor::ResourceHolder<sf::Texture, std::string> textures_holder_;
 	thor::ResourceHolder<sf::SoundBuffer, std::string> sounds_holder_;
+	thor::ResourceHolder<thor::FrameAnimation, std::string> animations_holder_;
 
 	std::unique_ptr<GameState> currentState_, nextState_;
 
@@ -33,6 +35,9 @@ private:
 	void loadTextures();
 	//! Load sounds into thor::ResourceHolder
 	void loadSounds();
+	void loadAnimations();
+
+	void loadAnimation(const std::string& path, const std::string& id);
 
 public:
 	Game(int argc, char ** argv);
@@ -46,6 +51,7 @@ public:
 	int getHeight() const;
 	const sf::Texture& getTexture(const std::string &id) const;
 	const sf::SoundBuffer& getSound(const std::string &id) const;
+	const thor::FrameAnimation& getAnimation(const std::string &id) const;
 };
 
 #endif // TDF_GAME_HPP

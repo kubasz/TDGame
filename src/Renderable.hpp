@@ -6,12 +6,14 @@
 #include <memory>
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
 
 //! A base class for a component which can be rendered, and hit-tested.
 class Renderable
 {
 public:
 	virtual ~Renderable() {}
+	virtual void update(const sf::Time&) {}
 	virtual void render(sf::RenderTarget & target) = 0;
 	virtual bool isHit(sf::Vector2f /*point*/) const
 	{
@@ -29,6 +31,12 @@ private:
 public:
 	CompositeRenderable()
 	{}
+
+	void update(const sf::Time &dt)
+	{
+		for (auto & child : children_)
+			child->update(dt);
+	}
 
 	void addChild(std::unique_ptr<T> child)
 	{

@@ -51,6 +51,8 @@ public:
 		return accum;
 	}
 
+	inline virtual void update(const sf::Time&) {}
+
 	inline void update(sf::Time dt, NavigationProvider<sf::Vector2i> & navigation)
 	{
 		// update buffs
@@ -59,8 +61,12 @@ public:
 			buff.duration -= dt.asMicroseconds() * 1e-6;
 		}
 		std::remove_if(buffs_.begin(), buffs_.end(), [](const CreepBuff& buff){return buff.duration <= 0.0;});
+		
 		// update walk
 		walkComponent_->update(dt, navigation, queryBuff(CreepBuff::Type::BUFF_SPEED));
+		
+		//update animations
+		displayComponent_->update(dt);
 	}
 
 	inline virtual void render(sf::RenderTarget & target) override
