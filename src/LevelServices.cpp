@@ -237,7 +237,6 @@ void GridTowerPlacementOracle::updateTowerRestrictions()
 				checkChild(current + 1);
 			if (x > 0)
 				checkChild(current - 1);
-
 		}
 	}
 }
