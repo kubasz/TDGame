@@ -213,6 +213,9 @@ public:
 
 	void update(sf::Time dt);
 	void render(sf::RenderTarget & target);
+
+private:
+	void renderBackground(sf::RenderTarget & target);
 };
 
 #endif // TDF_LEVEL_HPP

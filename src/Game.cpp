@@ -54,6 +54,8 @@ void Game::loadTextures()
 		thor::Resources::fromFile <sf::Texture>("data/Images/wall.png"));
 	textures_holder_.acquire("Creep", 
 		thor::Resources::fromFile <sf::Texture>("data/Images/creep.png"));
+	textures_holder_.acquire("Floor",
+		thor::Resources::fromFile <sf::Texture>("data/Images/floor.png"));
 }
 
 void Game::loadSounds()

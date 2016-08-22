@@ -291,10 +291,41 @@ void LevelInstance::update(sf::Time dt)
 
 void LevelInstance::render(sf::RenderTarget & target)
 {
-	gridTowerPlacement_.render(target);
+	renderBackground(target);
 
 	// Remove all expired weak_ptrs
 	removeFromVectorIf(renderables_, std::mem_fn(&std::weak_ptr<Renderable>::expired));
 	for (auto & renderable : renderables_)
 		renderable.lock()->render(target);
+}
+
+void LevelInstance::renderBackground(sf::RenderTarget & target)
+{
+	const int32_t width = level_->getWidth();
+	const int32_t height = level_->getHeight();
+
+	sf::RectangleShape rs;
+	rs.setSize({ 1.f, 1.f });
+	rs.setOrigin({ 0.5f, 0.5f });
+	rs.setTexture(&game_.getTexture("Floor"));
+
+	for (int y = -30; y < height+30; y++) {
+		for (int x = -30; x < width+30; x++) {
+			rs.setFillColor(sf::Color(128, 128, 128, 255));
+			rs.setPosition((float)x, (float)y);
+			target.draw(rs);
+		}
+	}
+
+	for (int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			if (gridTowerPlacement_.canPlaceTowerHere({ x, y })) {
+				rs.setFillColor(sf::Color(255, 255, 255, 255));
+			} else {
+				rs.setFillColor(sf::Color(255, 128, 128, 255));
+			}
+			rs.setPosition((float)x, (float)y);
+			target.draw(rs);
+		}
+	}
 }

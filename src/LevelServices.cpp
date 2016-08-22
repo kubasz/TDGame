@@ -127,26 +127,6 @@ bool GridTowerPlacementOracle::canPlaceTowerHere(const sf::Vector2i & at) const
 	return false;
 }
 
-void GridTowerPlacementOracle::render(sf::RenderTarget & target)
-{
-	const int32_t width = levelInstance_.getLevel()->getWidth();
-	const int32_t height = levelInstance_.getLevel()->getHeight();
-
-	sf::RectangleShape rs;
-	rs.setSize({ 1.f, 1.f });
-	rs.setOrigin({ 0.5f, 0.5f });
-	rs.setFillColor(sf::Color(0, 0, 255, 127));
-
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			if (canPlaceTowerHere({ x, y })) {
-				rs.setPosition((float)x, (float)y);
-				target.draw(rs);
-			}
-		}
-	}
-}
-
 void GridTowerPlacementOracle::updateTowerRestrictions()
 {
 	// The algorithm marks cut points, creep sources and the goal
