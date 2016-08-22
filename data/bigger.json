@@ -2,7 +2,7 @@
 	"name": "Sample level",
 	"starting-lives": 10,
 	"starting-money": 100,
-	"grid-size": [ 20, 20 ],
+	"grid-size": [ 25, 25 ],
 	"goal": [ 10, 10 ],
 	"waves": [
 		{

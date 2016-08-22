@@ -40,12 +40,14 @@ void GridNavigationProvider::update()
 	const int32_t width = levelInstance_.getLevel()->getWidth();
 	const int32_t height = levelInstance_.getLevel()->getHeight();
 	const int32_t tableSize = width * height;
-	std::queue<std::pair<int32_t, int32_t>> verts;
+	std::queue<int32_t> verts;
 
 	// Prepare tables
 	std::fill(path_.get(), path_.get() + tableSize, EMPTY);
 	const int32_t goalIndex = goal_.y * width + goal_.x;
-	verts.emplace(goalIndex, goalIndex);
+	verts.emplace(goalIndex);
+
+	path_[goalIndex] = goalIndex;
 
 	// Reserve locations occupied by towers
 	for (int y = 0; y < height; y++) {
@@ -58,19 +60,17 @@ void GridNavigationProvider::update()
 
 	do
 	{
-		const int32_t current = verts.front().first;
-		const int32_t previous = verts.front().second;
+		const int32_t current = verts.front();
 		verts.pop();
-
-		path_[current] = previous;
 
 		const int32_t x = current % width;
 		const int32_t y = current / width;
 
 		auto tryPushVertex = [&](int32_t next)
 		{
-			if (next != previous && path_[next] == EMPTY) {
-				verts.emplace(next, current);
+			if (path_[next] == EMPTY) {
+				path_[next] = current;
+				verts.emplace(next);
 			}
 		};
 
