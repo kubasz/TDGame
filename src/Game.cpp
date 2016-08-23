@@ -1,5 +1,6 @@
 #include <exception>
 #include <fstream>
+#include <iostream>
 #include <SFGUI/Renderers.hpp>
 
 #include "MakeUnique.hpp"
@@ -50,13 +51,13 @@ void Game::loadTextures()
 {
 	//loading textures into resources holder
 	textures_holder_.acquire("Tower",
-		thor::Resources::fromFile <sf::Texture>("data/Images/tower.png"));
+		thor::Resources::fromFile <sf::Texture>("data/Images/Tower/tower.png"));
 	textures_holder_.acquire("TowerHead",
-		thor::Resources::fromFile <sf::Texture>("data/Images/tower_head.png"));
+		thor::Resources::fromFile <sf::Texture>("data/Images/Tower/tower_head.png"));
 
 	textures_holder_.acquire("Wall",
 		thor::Resources::fromFile <sf::Texture>("data/Images/Wall/wall.png"));
-	textures_holder_.acquire("Creep", 
+	textures_holder_.acquire("Creep",
 		thor::Resources::fromFile <sf::Texture>("data/Images/Creep/creep.png"));
 	textures_holder_.acquire("Floor",
 		thor::Resources::fromFile <sf::Texture>("data/Images/Floor/floor.png"));
