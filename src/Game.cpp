@@ -48,18 +48,21 @@ void Game::loadResources()
 void Game::loadTextures()
 {
 	//loading textures into resources holder
-	textures_holder_.acquire("Tower", 
+	textures_holder_.acquire("Tower",
 		thor::Resources::fromFile <sf::Texture>("data/Images/tower.png"));
+	textures_holder_.acquire("TowerHead",
+		thor::Resources::fromFile <sf::Texture>("data/Images/tower_head.png"));
+
 	textures_holder_.acquire("Wall",
 		thor::Resources::fromFile <sf::Texture>("data/Images/wall.png"));
-	textures_holder_.acquire("Creep", 
+	textures_holder_.acquire("Creep",
 		thor::Resources::fromFile <sf::Texture>("data/Images/creep.png"));
 }
 
 void Game::loadSounds()
 {
 	//loading textures into resources holder
-	sounds_holder_.acquire("Creep", 
+	sounds_holder_.acquire("Creep",
 		thor::Resources::fromFile <sf::SoundBuffer>("data/Audio/creep.ogg"));
 }
 
@@ -129,7 +132,7 @@ int main(int argc, char ** argv)
 	try {
 		return Game(argc, argv).run();
 	}
-	
+
 	catch (std::runtime_error & err) {
 		std::cout << "Runtime error: " << err.what() << std::endl;
 		//WAIT_ANY_KEY;

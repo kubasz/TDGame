@@ -40,7 +40,7 @@ private:
 public:
 	TowerTargettingDisplayComponent(
 			TowerTargetingComponent & targeting,
-			sf::Vector2f position, const sf::Texture& texture);
+			sf::Vector2f position, const sf::Texture& texture, const sf::Texture& textureHead);
 	virtual void render(sf::RenderTarget & target) override;
 };
 

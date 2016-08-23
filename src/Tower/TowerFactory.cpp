@@ -19,7 +19,7 @@ static std::vector<std::pair<std::string, towerTypeInfo_t>> typeInfos_ = []()
 			auto targeting = std::make_unique<TowerClosestTargetingComponent>(position, 3.f);
 			auto shooting = std::make_unique<TowerLinearShootingComponent>(1.f, "GenericBullet");
 			auto display = std::make_unique<TowerTargettingDisplayComponent>(*targeting.get(),
-				position, game__.getTexture("Tower"));
+				position, game__.getTexture("Tower"), game__.getTexture("TowerHead"));
 			return std::make_shared<Tower>(
 				position,
 				35,
@@ -34,7 +34,7 @@ static std::vector<std::pair<std::string, towerTypeInfo_t>> typeInfos_ = []()
 				auto targeting = std::make_unique<TowerClosestTargetingComponent>(position, 8.f);
 				auto shooting = std::make_unique<TowerLinearShootingComponent>(2.f, "GenericBullet");
 				auto display = std::make_unique<TowerTargettingDisplayComponent>(*targeting.get(),
-                    position, game__.getTexture("Tower"));
+					position, game__.getTexture("Tower"), game__.getTexture("TowerHead"));
 				return std::make_shared<Tower>(
 						position,
 						50,
@@ -50,7 +50,7 @@ static std::vector<std::pair<std::string, towerTypeInfo_t>> typeInfos_ = []()
 				auto targeting = std::make_unique<TowerClosestTargetingComponent>(position, 10.f);
 				auto shooting = std::make_unique<TowerLinearShootingComponent>(0.25f, "LaserBullet");
 				auto display = std::make_unique<TowerTargettingDisplayComponent>(*targeting.get(),
-				    position, game__.getTexture("Tower"));
+					position, game__.getTexture("Tower"), game__.getTexture("TowerHead"));
 				return std::make_shared<Tower>(
 						position,
 						100,
