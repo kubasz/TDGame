@@ -53,7 +53,7 @@ private:
 	void centerView();
 
 	void handleResize(int width, int height);
-	void handleClick(sf::Vector2i position);
+	void handleClick(sf::Vector2i position, bool isLeft);
 	bool handleKeyPress(sf::Keyboard::Key key);
 	void handleCommand(sf::String cmd);
 

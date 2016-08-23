@@ -37,7 +37,7 @@ sfg::Widget::Ptr Tower::getPanel(std::shared_ptr<LevelInstance> levelInstance)
 {
 	auto label = sfg::Label::Create("Tower #" + std::to_string((intptr_t)this));
 
-	auto sellButton = sfg::Button::Create("Sell");
+	auto sellButton = sfg::Button::Create("Sell for " + std::to_string(sellCost_));
 	sellButton->GetSignal(sfg::Button::OnLeftClick).Connect([this, levelInstance]() {
 		levelInstance->sellTower(this);
 	});

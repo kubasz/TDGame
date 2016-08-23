@@ -2,17 +2,18 @@
 #include <memory>
 #include <SFML/System.hpp>
 #include "BulletMovementComponent.hpp"
+#include "BulletDamageComponent.hpp"
 #include "../Creep/Creep.hpp"
 
 BulletTimedMovementComponent::BulletTimedMovementComponent(
+	std::unique_ptr<BulletDamageComponent> damageComponent,
 	float time,
 	const std::shared_ptr<Creep> & target,
-	int32_t damage,
 	sf::Vector2f startingPosition)
-	: position_(startingPosition)
+    : damageComponent_(std::move(damageComponent))
+	, position_(startingPosition)
 	, timeToHit_(time)
 	, target_(target)
-	, damage_(damage)
 {}
 
 void BulletTimedMovementComponent::update(sf::Time dt)
@@ -29,7 +30,7 @@ void BulletTimedMovementComponent::update(sf::Time dt)
 	timeToHit_ = nextTime;
 
 	if (nextTime == 0.f) {
-		lockedTarget->inflictDamage(damage_);
+		damageComponent_->damage(lockedTarget);
 		target_.reset();
 	}
 }
@@ -57,14 +58,14 @@ sf::Vector2f BulletTimedMovementComponent::getTargetPosition() const
 }
 
 BulletLaserMovementComponent::BulletLaserMovementComponent(
+		std::unique_ptr<BulletDamageComponent> damageComponent,
 		float time,
 		const std::shared_ptr<Creep> & target,
-		int32_t damage,
 		sf::Vector2f startingPosition)
-		: position_(startingPosition)
+		: damageComponent_(std::move(damageComponent))
+		, position_(startingPosition)
 		, timeToHit_(time)
 		, target_(target)
-		, damage_(damage)
 {}
 
 void BulletLaserMovementComponent::update(sf::Time dt)
@@ -78,7 +79,7 @@ void BulletLaserMovementComponent::update(sf::Time dt)
 	timeToHit_ = nextTime;
 
 	if (nextTime == 0.f) {
-		lockedTarget->inflictDamage(damage_);
+		damageComponent_->damage(lockedTarget);
 		target_.reset();
 	}
 }

@@ -135,8 +135,17 @@ void LevelGameState::handleResize(int width, int height)
 	});
 }
 
-void LevelGameState::handleClick(sf::Vector2i /*position*/)
+void LevelGameState::handleClick(sf::Vector2i /*position*/, bool isLeft)
 {
+	if(!isLeft)
+		{
+			selectedObject_ = levelInstance_->selectAt(lastMouseLevelPosition_);
+
+			guiInfoPanelLocation_->RemoveAll();
+			if (std::shared_ptr<Selectable> selectedObject = selectedObject_.lock())
+				guiInfoPanelLocation_->PackEnd(selectedObject->getPanel(levelInstance_), true);
+		}
+
 	if (isPlacingTower_ && levelInstance_->canPlaceTowerHere(hoveredTile_)) {
 		levelInstance_->createTowerAt(placedTowerTypeName_, hoveredTile_);
 		// isPlacingTower_ = false;
@@ -233,11 +242,7 @@ void LevelGameState::handleCommand(sf::String scmd)
 			auto& cr = this->levelInstance_->getCreeps();
 			for(auto& creep : cr)
 			{
-				CreepBuff buff = {};
-				buff.type = CreepBuff::Type::BUFF_SPEED;
-				buff.duration = 5.0;
-				buff.strength = amount;
-				creep->applyBuff(buff);
+				creep->applyBuff(CreepBuff(5.0f, CreepBuff::Type::BUFF_SPEED, amount));
 			}
 		}
 	}
@@ -372,7 +377,8 @@ void LevelGameState::handleEvent(const sf::Event & evt)
 
 	if (evt.type == sf::Event::MouseButtonPressed) {
 		if (evt.mouseButton.x < windowSize_.x - RIGHT_PANEL_WIDTH) {
-			handleClick({ evt.mouseButton.x, evt.mouseButton.y });
+			handleClick({ evt.mouseButton.x, evt.mouseButton.y },
+				evt.mouseButton.button == sf::Mouse::Button::Left);
 		}
 	}
 

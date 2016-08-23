@@ -1,5 +1,5 @@
 #include <exception>
-#include <iostream>
+#include <fstream>
 #include <SFGUI/Renderers.hpp>
 
 #include "MakeUnique.hpp"
@@ -43,6 +43,7 @@ void Game::loadResources()
 {
 	loadTextures();
 	loadSounds();
+	loadAnimations();
 }
 
 void Game::loadTextures()
@@ -54,16 +55,56 @@ void Game::loadTextures()
 		thor::Resources::fromFile <sf::Texture>("data/Images/tower_head.png"));
 
 	textures_holder_.acquire("Wall",
-		thor::Resources::fromFile <sf::Texture>("data/Images/wall.png"));
-	textures_holder_.acquire("Creep",
-		thor::Resources::fromFile <sf::Texture>("data/Images/creep.png"));
+		thor::Resources::fromFile <sf::Texture>("data/Images/Wall/wall.png"));
+	textures_holder_.acquire("Creep", 
+		thor::Resources::fromFile <sf::Texture>("data/Images/Creep/creep.png"));
+	textures_holder_.acquire("Floor",
+		thor::Resources::fromFile <sf::Texture>("data/Images/Floor/floor.png"));
 }
 
 void Game::loadSounds()
 {
-	//loading textures into resources holder
-	sounds_holder_.acquire("Creep",
-		thor::Resources::fromFile <sf::SoundBuffer>("data/Audio/creep.ogg"));
+	sounds_holder_.acquire("Tower",
+		thor::Resources::fromFile <sf::SoundBuffer>("data/Audio/tower.ogg"));
+	sounds_holder_.acquire("Laser",
+		thor::Resources::fromFile <sf::SoundBuffer>("data/Audio/laser.ogg"));
+}
+
+void Game::loadAnimation(const std::string& path, const std::string& id)
+{
+	thor::FrameAnimation tmp;
+	sf::IntRect rect;
+	int n, x1, x2, y1, y2;
+
+	std::ifstream fin(path.c_str());
+	assert(fin.is_open());
+
+	fin>>n;
+
+	for(int i = 0; i < n; i++){
+		fin>>x1>>y1>>x2>>y2;
+
+		rect = sf::IntRect(x1, y1, x2, y2);
+		tmp.addFrame(1.f/(float)n, rect);
+	}
+
+	fin.close();
+
+	auto fun = [=](){
+		return std::make_unique<thor::FrameAnimation>(tmp);
+	};
+
+	thor::ResourceLoader<thor::FrameAnimation> loaderTmp(fun, id);
+	loaderTmp.load();
+
+	animations_holder_.acquire(id,
+		loaderTmp);
+}
+
+void Game::loadAnimations()
+{
+	//loading animations into resources holder
+	loadAnimation("data/Images/Creep/creep.txt", "Creep");
 }
 
 void Game::setNextState(std::unique_ptr<GameState> gameState)
@@ -125,6 +166,11 @@ const sf::Texture& Game::getTexture(const std::string &id) const
 const sf::SoundBuffer& Game::getSound(const std::string &id) const
 {
 	return sounds_holder_[id];
+}
+
+const thor::FrameAnimation& Game::getAnimation(const std::string &id) const
+{
+	return animations_holder_[id];
 }
 
 int main(int argc, char ** argv)

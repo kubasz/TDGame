@@ -64,9 +64,6 @@ public:
 	GridTowerPlacementOracle(LevelInstance & levelInstance);
 	virtual bool canPlaceTowerHere(const sf::Vector2i & at) const override;
 
-	//! Draws places suitable for Tower placement.
-	void render(sf::RenderTarget & target);
-
 	//! Updates information about positions restricted by Towers.
 	void updateTowerRestrictions();
 

@@ -4,6 +4,7 @@
 #define TDF_TOWER_SHOOTING_COMPONENT
 
 #include <SFML/System.hpp>
+#include <SFML/Audio.hpp>
 
 class BulletFactory;
 
@@ -21,9 +22,11 @@ class TowerLinearShootingComponent final : public TowerShootingComponent
 private:
 	float charge_, maxCharge_;
 	std::string bulletType_;
+	sf::Sound sound_;
 
 public:
-	TowerLinearShootingComponent(float shotsPerSecond, std::string bulletType);
+	TowerLinearShootingComponent(float shotsPerSecond, std::string bulletType,
+								 const sf::SoundBuffer &sound);
 	virtual void update(sf::Time dt, BulletFactory & bulletFactory) override;
 };
 

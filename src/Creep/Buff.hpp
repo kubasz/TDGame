@@ -12,4 +12,10 @@ struct CreepBuff
 	double duration;
 	Type type;
 	float strength;
+
+	CreepBuff(double duration, Type type, float strength)
+			: duration(duration)
+			, type(type)
+			, strength(strength)
+	{}
 };

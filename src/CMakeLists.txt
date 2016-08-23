@@ -1,5 +1,6 @@
 set(SOURCES
 	Bullet/Bullet.cpp
+	Bullet/BulletDamageComponent.cpp
 	Bullet/BulletDisplayComponent.cpp
 	Bullet/BulletFactory.cpp
 	Bullet/BulletMovementComponent.cpp
@@ -25,6 +26,7 @@ set(SOURCES
 
 set(HEADERS
 	Bullet/Bullet.hpp
+	Bullet/BulletDamageComponent.hpp
 	Bullet/BulletDisplayComponent.hpp
 	Bullet/BulletFactory.hpp
 	Bullet/BulletMovementComponent.hpp

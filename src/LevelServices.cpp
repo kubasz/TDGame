@@ -40,12 +40,14 @@ void GridNavigationProvider::update()
 	const int32_t width = levelInstance_.getLevel()->getWidth();
 	const int32_t height = levelInstance_.getLevel()->getHeight();
 	const int32_t tableSize = width * height;
-	std::queue<std::pair<int32_t, int32_t>> verts;
+	std::queue<int32_t> verts;
 
 	// Prepare tables
 	std::fill(path_.get(), path_.get() + tableSize, EMPTY);
 	const int32_t goalIndex = goal_.y * width + goal_.x;
-	verts.emplace(goalIndex, goalIndex);
+	verts.emplace(goalIndex);
+
+	path_[goalIndex] = goalIndex;
 
 	// Reserve locations occupied by towers
 	for (int y = 0; y < height; y++) {
@@ -58,19 +60,17 @@ void GridNavigationProvider::update()
 
 	do
 	{
-		const int32_t current = verts.front().first;
-		const int32_t previous = verts.front().second;
+		const int32_t current = verts.front();
 		verts.pop();
-
-		path_[current] = previous;
 
 		const int32_t x = current % width;
 		const int32_t y = current / width;
 
 		auto tryPushVertex = [&](int32_t next)
 		{
-			if (next != previous && path_[next] == EMPTY) {
-				verts.emplace(next, current);
+			if (path_[next] == EMPTY) {
+				path_[next] = current;
+				verts.emplace(next);
 			}
 		};
 
@@ -127,26 +127,6 @@ bool GridTowerPlacementOracle::canPlaceTowerHere(const sf::Vector2i & at) const
 	return false;
 }
 
-void GridTowerPlacementOracle::render(sf::RenderTarget & target)
-{
-	const int32_t width = levelInstance_.getLevel()->getWidth();
-	const int32_t height = levelInstance_.getLevel()->getHeight();
-
-	sf::RectangleShape rs;
-	rs.setSize({ 1.f, 1.f });
-	rs.setOrigin({ 0.5f, 0.5f });
-	rs.setFillColor(sf::Color(0, 0, 255, 127));
-
-	for (int y = 0; y < height; y++) {
-		for (int x = 0; x < width; x++) {
-			if (canPlaceTowerHere({ x, y })) {
-				rs.setPosition((float)x, (float)y);
-				target.draw(rs);
-			}
-		}
-	}
-}
-
 void GridTowerPlacementOracle::updateTowerRestrictions()
 {
 	// The algorithm marks cut points, creep sources and the goal
@@ -172,7 +152,7 @@ void GridTowerPlacementOracle::updateTowerRestrictions()
 		int32_t minimum = preCounter++;
 		pre_[current] = minimum;
 		parents_[current] = parent;
-		dp_[current] = permanentlyOccupied_[current];
+		dp_[current] = permanentlyOccupied_[current] || occupiedByCreeps_[current];
 
 		auto processChild = [&](int32_t child, int32_t nx, int32_t ny) {
 			if (child != parent && !levelInstance_.getTowerAt(nx, ny)) {
@@ -237,7 +217,6 @@ void GridTowerPlacementOracle::updateTowerRestrictions()
 				checkChild(current + 1);
 			if (x > 0)
 				checkChild(current - 1);
-
 		}
 	}
 }
@@ -256,4 +235,6 @@ void GridTowerPlacementOracle::updateCreepRestrictions()
 			occupiedByCreeps_[point.y * width + point.x] = true;
 		}
 	}
+
+	updateTowerRestrictions();
 }
